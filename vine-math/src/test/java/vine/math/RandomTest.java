@@ -7,17 +7,20 @@ public class RandomTest
     @Test
     public void testPow()
     {
+        double x;
         long time = System.currentTimeMillis();
-        for (int i = 0; i < 1000000; i++)
+        x = 0;
+        for (int i = 0; i < 1000; i++)
         {
-            Math.pow(i, 3);
+            x += Math.pow(0.88, i);
         }
-        System.out.println(System.currentTimeMillis() - time);
+        System.out.println(System.currentTimeMillis() - time + " , " + x);
         time = System.currentTimeMillis();
-        for (int i = 0; i < 1000000; i++)
+        x = 0;
+        for (int i = 0; i < 1000; i++)
         {
-            VineMath.pow(i, 3);
+            x += VineMath.pow(0.88, i);
         }
-        System.out.println(System.currentTimeMillis() - time);
+        System.out.println(System.currentTimeMillis() - time + " , " + x);
     }
 }

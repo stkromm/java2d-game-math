@@ -19,19 +19,95 @@ public final class VineMath
         // Utility class
     }
 
+    public static double binominalCoefficient(final int n, final int k)
+    {
+        return factorial(n) / (double) (factorial(k) * factorial(n - k));
+    }
+
+    public static long factorial(final int n)
+    {
+        if (n < 0 || n > 20)
+        {
+            throw new IllegalArgumentException(n + " is no valid value to calculate a factorial.");
+        }
+        return FactorialLookup.factorial(n);
+    }
+
+    public static double sqrt(final double value)
+    {
+        return StrictMath.sqrt(value);
+    }
+
+    /**
+     * Calculates the square root of the given value. This method is about two
+     * times faster than the regular sqrt method, but it is only a very rough
+     * approximation. The calculated value has a error of 0.5 - 1.5 % but a
+     * error up to 10% is possible.
+     *
+     * @param x
+     * @return
+     */
+    public static float fastSqrt(final float x)
+    {
+        return Float.intBitsToFloat(532483686 + (Float.floatToRawIntBits(x) >> 1));
+    }
+
+    public static double pow(final double a, final double b)
+    {
+        return StrictMath.pow(a, b);
+    }
+
+    public static int pow(final int a, final int b)
+    {
+        int base = a;
+        int power = b;
+        int result = 1;
+        for (; power != 0; power >>= 1)
+        {
+            if ((power & ONE_BIT) == ONE_BIT)
+            {
+                result *= base;
+            }
+            base *= base;
+        }
+
+        return result;
+    }
+
+    public static float fastExp(final float val)
+    {
+        final long tmp = (long) (1512775 * val + 1072632447);
+        return Float.intBitsToFloat((int) (tmp << 32));
+    }
+
+    public static double exp(final double value)
+    {
+        return Math.exp(value);
+    }
+
+    public static float fastLog(final float x)
+    {
+        return 6 * (x - 1) / (x + 1 + 4 * (float) VineMath.sqrt(x));
+    }
+
+    public static double log(final double value)
+    {
+        return Math.log(value);
+    }
+
     public static float abs(final float value)
     {
-        return value <= 0.0f ? 0.0f - value : value;
+        return Math.abs(value);
     }
 
     public static double abs(final double value)
     {
-        return value <= 0.0 ? 0.0 - value : value;
+        return Math.abs(value);
     }
 
     public static int abs(final int value)
     {
-        return value >= 0 ? value : -value;
+        return Math.abs(value);
     }
 
     public static float max(final float t3, final float t4)
@@ -146,57 +222,7 @@ public final class VineMath
         return RANDOM.nextFloat() * max;
     }
 
-    public static double binominalCoefficient(final int n, final int k)
-    {
-        return factorial(n) / (double) (factorial(k) * factorial(n - k));
-    }
-
-    public static long factorial(final int n)
-    {
-        if (n < 0 || n > 20)
-        {
-            throw new IllegalArgumentException(n + " is no valid value to calculate a factorial.");
-        }
-        return FactorialLookup.factorial(n);
-    }
-
-    public static double sqrt(final double value)
-    {
-        return StrictMath.sqrt(value);
-    }
-
-    public static double pow(final double a, final double b)
-    {
-        return StrictMath.pow(a, b);
-    }
-
-    public static int pow(final int a, final int b)
-    {
-        int base = a;
-        int power = b;
-        int result = 1;
-        for (; power != 0; power >>= 1)
-        {
-            if ((power & ONE_BIT) == ONE_BIT)
-            {
-                result *= base;
-            }
-            base *= base;
-        }
-
-        return result;
-    }
-
-    public static float exp(final float val)
-    {
-        final long tmp = (long) (1512775 * val + 1072632447);
-        return Float.intBitsToFloat((int) (tmp << 32));
-    }
-
-    public static float log(final float x)
-    {
-        return 6 * (x - 1) / (x + 1 + 4 * (float) VineMath.sqrt(x));
-    }
+    // Trigonometric functions
 
     public static float sin(final float rad)
     {
