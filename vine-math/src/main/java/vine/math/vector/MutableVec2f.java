@@ -158,12 +158,6 @@ public class MutableVec2f extends Vec2f implements Transformable
         }
     }
 
-    @Override
-    public final void rotate(final float degrees)
-    {
-        rotateRadians(VineMath.toRadians(degrees));
-    }
-
     /**
      * Rotates this vector by the given radian angle. (positive value means
      * counterclockwise)
@@ -228,6 +222,12 @@ public class MutableVec2f extends Vec2f implements Transformable
     public final void translate(final float x, final float y)
     {
         add(x, y);
+    }
+
+    @Override
+    public final void rotate(final float degrees)
+    {
+        rotateRadians(VineMath.toRadians(degrees));
     }
 
     @Override

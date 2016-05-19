@@ -57,6 +57,23 @@ public final class Vec3Util
         return VineMath.sqrt(dot(x, y, z, x, y, z));
     }
 
+    /**
+     * Calculates the dot product of the 2 each element given 3d vectors.
+     *
+     * @param x1
+     *            x Coordinate of the 1st vector
+     * @param y1
+     *            y Coordinate of the 1st vector
+     * @param z1
+     *            z Coordinate of the 1st vector
+     * @param x2
+     *            x Coordinate of the 2nd vector
+     * @param y2
+     *            y Coordinate of the 2nd vector
+     * @param z2
+     *            z Coordinate of the 2nd vector
+     * @return The dot product of the given vectors.
+     */
     public static double dot(
             final double x1,
             final double y1,
@@ -68,6 +85,23 @@ public final class Vec3Util
         return x1 * x2 + y1 * y2 + z1 * z2;
     }
 
+    /**
+     * Calculates the dot product of the 2 each element given 3d vectors.
+     *
+     * @param x1
+     *            x Coordinate of the 1st vector
+     * @param y1
+     *            y Coordinate of the 1st vector
+     * @param z1
+     *            z Coordinate of the 1st vector
+     * @param x2
+     *            x Coordinate of the 2nd vector
+     * @param y2
+     *            y Coordinate of the 2nd vector
+     * @param z2
+     *            z Coordinate of the 2nd vector
+     * @return The dot product of the given vectors.
+     */
     public static float dot(
             final float x1,
             final float y1,

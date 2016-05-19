@@ -61,6 +61,12 @@ public class Vec3f
         invalidate();
     }
 
+    /**
+     * Creates a new vector which is a copy of the given vector.
+     *
+     * @param vector
+     *            The vector to be copied
+     */
     public Vec3f(final Vec3f vector)
     {
         x = vector.x;

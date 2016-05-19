@@ -155,9 +155,9 @@ public final class Vec2Util
     }
 
     /**
-     * Return the angle between the 2 elementwise defined 2d vectors in radians.
-     * The value defines the direction of rotation from vector1 to vector2 and
-     * points always to a angle between [0,PI].
+     * Return the angle between the 2 wach element defined vector 2ds in
+     * radians. The value defines the direction of rotation from vector1 to
+     * vector2 and points always to a angle between [0,PI].
      *
      * @param x1
      *            x Coordinate of the first vector
@@ -187,15 +187,24 @@ public final class Vec2Util
         }
         final float pseudoCross = pseudoCross(x1, y1, x2, y2);
         float angle = VineMath.atan2(pseudoCross, dot);
-        if (angle <= -VineMath.PIF + VEC2_EPSILON)
+        if (angle <= VEC2_EPSILON - VineMath.PIF)
         {
             angle = -1 * angle;
         }
         return angle;
     }
 
+    /**
+     * Calculates the slope of the given vector interpreted as a direction in 2d
+     * space.
+     *
+     * @param direction
+     *            The direction whichs slope is calculated
+     * @return The slope of the given direction
+     */
     public static float getSlope(final Vec2f direction)
     {
         return direction.getY() / direction.getX();
     }
+
 }

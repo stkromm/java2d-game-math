@@ -8,19 +8,24 @@ public class RandomTest
     public void testPow()
     {
         double x;
-        long time = System.currentTimeMillis();
+        long a, b;
+        long time = System.nanoTime();
         x = 0;
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 1; i++)
         {
-            x += Math.pow(0.88, i);
+            x += VineMath.pow(5.0f, 2.0f);
         }
-        System.out.println(System.currentTimeMillis() - time + " , " + x);
-        time = System.currentTimeMillis();
+        a = System.nanoTime() - time;
+        time = System.nanoTime();
+        System.out.println(x);
         x = 0;
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 1; i++)
         {
-            x += VineMath.pow(0.88, i);
+            x += VineMath.fastPow(5.0f, 2.0f);
         }
-        System.out.println(System.currentTimeMillis() - time + " , " + x);
+        System.out.println(x);
+        System.out.println(Math.pow(5, 2.0));
+        b = System.nanoTime() - time;
+        System.out.println(a + " , " + b);
     }
 }

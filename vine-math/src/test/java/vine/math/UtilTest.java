@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import vine.math.geometry.shape.ShapeUtil;
+import vine.math.misc.SummedAreaTable;
 
 public class UtilTest
 {

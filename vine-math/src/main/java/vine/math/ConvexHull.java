@@ -41,15 +41,15 @@ public final class ConvexHull
 
     public static Vec2f[] calculateConvexHull(final Vec2f[] vertices)
     {
-        final List<Vec2f> verticesList = new ArrayList<>();
+        final List<Vec2f> verticesList = new ArrayList<Vec2f>();
         Collections.addAll(verticesList, vertices);
         Collections.sort(verticesList, VERTEX_COMPARATOR);
 
         final Vec2f[] verticesSorted = new Vec2f[vertices.length];
         verticesList.toArray(verticesSorted);
 
-        final List<Vec2f> upperList = new ArrayList<>();
-        final List<Vec2f> lowerList = new ArrayList<>();
+        final List<Vec2f> upperList = new ArrayList<Vec2f>();
+        final List<Vec2f> lowerList = new ArrayList<Vec2f>();
 
         // Calculate the upper list
         upperList.add(verticesSorted[0]);

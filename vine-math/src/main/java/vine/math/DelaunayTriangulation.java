@@ -2,9 +2,9 @@ package vine.math;
 
 import vine.math.vector.Vec2f;
 
-public final class DelauneyTriangulation
+public final class DelaunayTriangulation
 {
-    private DelauneyTriangulation()
+    private DelaunayTriangulation()
     {
         // Utility class
     }
