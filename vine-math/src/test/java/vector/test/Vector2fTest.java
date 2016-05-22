@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import vine.math.VineMath;
 import vine.math.vector.MutableVec2f;
-import vine.math.vector.Vec2f;
 import vine.math.vector.Vec2Util;
+import vine.math.vector.Vec2f;
 
 /**
  * @author Steffen
@@ -154,7 +154,7 @@ public class Vector2fTest
         vector = new MutableVec2f();
         vector.set(4, 6);
 
-        vector.scale(1.f / (float) vector.length(), 1.f / (float) vector.length());
+        vector.scale(1.f / vector.length(), 1.f / vector.length());
         assertTrue(Math.abs(vector.length() - 1) <= Vec2Util.VEC2_EPSILON);
     }
 
@@ -187,7 +187,7 @@ public class Vector2fTest
         vec.rotate90(false);
         assertTrue(vec.equalWithEpsilon(-1, 1));
         vec.rotate90(true);
-        vec.rotate(-90);
+        vec.rotateDegrees(-90);
         final Vec2f v2 = new Vec2f(1, -1);
         assertTrue(v2.equalWithEpsilon(vec));
     }

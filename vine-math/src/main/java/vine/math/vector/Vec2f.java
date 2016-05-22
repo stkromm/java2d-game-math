@@ -6,6 +6,8 @@ import static vine.math.vector.Vec2Util.VEC2_EPSILON;
 
 import java.io.Serializable;
 
+import vine.math.VineMath;
+
 /**
  * Represents a mathematical immutable vector 2d.
  *
@@ -46,6 +48,8 @@ public class Vec2f implements Serializable
      */
     protected float           y;
 
+    protected float           length           = -1;
+
     /**
      * Creates a zero vector.
      */
@@ -80,6 +84,11 @@ public class Vec2f implements Serializable
     {
         x = vector.x;
         y = vector.y;
+    }
+
+    public final void invalidate()
+    {
+        length = -1;
     }
 
     /**
@@ -134,9 +143,13 @@ public class Vec2f implements Serializable
      *
      * @return the length of this Vector2f.
      */
-    public final double length()
+    public final float length()
     {
-        return Vec2Util.length(x, y);
+        if (length == -1)
+        {
+            length = (float) Vec2Util.length(x, y);
+        }
+        return length;
     }
 
     /**
@@ -159,7 +172,33 @@ public class Vec2f implements Serializable
      */
     public final float squaredDistance(final Vec2f vector)
     {
-        return Vec2Util.squaredLength(vector.getX() - x, vector.getY() - y);
+        return vector == null ? Float.MAX_VALUE : squaredDistance(vector.x, vector.y);
+    }
+
+    /**
+     * Returns the squared distance from the point defined by the each element
+     * given vector and this vector.
+     *
+     * @x x Coordinate of the point to which the squared distance is calculated
+     * @y y Coordinate of the point to which the squared distance is calculated
+     * @return The squared distance to the given point
+     */
+    public final float squaredDistance(final float x, final float y)
+    {
+        return Vec2Util.squaredLength(this.x - x, this.y - y);
+    }
+
+    /**
+     * Returns the distance from the point defined by the each element given
+     * vector and this vector.
+     *
+     * @x x Coordinate of the point to which the distance is calculated
+     * @y y Coordinate of the point to which the distance is calculated
+     * @return The distance to the given point
+     */
+    public final float distance(final float x, final float y)
+    {
+        return (float) sqrt(squaredDistance(x, y));
     }
 
     /**
@@ -170,9 +209,9 @@ public class Vec2f implements Serializable
      *            Point to which the distance is calculated
      * @return The distance to the given point
      */
-    public final double distance(final Vec2f vector)
+    public final float distance(final Vec2f vector)
     {
-        return sqrt(squaredDistance(vector));
+        return vector == null ? Float.MAX_VALUE : distance(vector.x, vector.y);
     }
 
     /**
@@ -229,7 +268,7 @@ public class Vec2f implements Serializable
     {
         final float xDif = x - this.x;
         final float yDif = y - this.y;
-        return abs(xDif) + abs(yDif) <= 2 * VEC2_EPSILON;
+        return VineMath.abs(xDif) + VineMath.abs(yDif) <= VEC2_EPSILON;
     }
 
     @Override
@@ -239,6 +278,10 @@ public class Vec2f implements Serializable
         {
             return false;
         }
+        if (object == this)
+        {
+            return true;
+        }
         final Vec2f vector = (Vec2f) object;
         return vector.x == x && vector.y == y;
     }
@@ -247,8 +290,8 @@ public class Vec2f implements Serializable
     public int hashCode()
     {
         int result = 1;
-        result = 31 * result + Float.floatToIntBits(x);
-        result = 7 * result + Float.floatToIntBits(y);
+        result = 5 * result + Float.floatToIntBits(x);
+        result = 11 * result + Float.floatToIntBits(y);
         return result;
     }
 

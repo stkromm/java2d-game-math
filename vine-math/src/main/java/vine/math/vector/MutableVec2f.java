@@ -62,6 +62,7 @@ public class MutableVec2f extends Vec2f implements Transformable
     public final void setX(final float x)
     {
         this.x = x;
+        invalidate();
     }
 
     /**
@@ -71,6 +72,7 @@ public class MutableVec2f extends Vec2f implements Transformable
     public final void setY(final float y)
     {
         this.y = y;
+        invalidate();
     }
 
     /**
@@ -83,6 +85,7 @@ public class MutableVec2f extends Vec2f implements Transformable
     {
         x = vec.x;
         y = vec.y;
+        invalidate();
     }
 
     /**
@@ -96,6 +99,13 @@ public class MutableVec2f extends Vec2f implements Transformable
     {
         this.x = x;
         this.y = y;
+        invalidate();
+    }
+
+    @Override
+    public final void translate(final float x, final float y)
+    {
+        add(x, y);
     }
 
     /**
@@ -110,6 +120,7 @@ public class MutableVec2f extends Vec2f implements Transformable
     {
         this.x += x;
         this.y += y;
+        invalidate();
     }
 
     /**
@@ -154,18 +165,31 @@ public class MutableVec2f extends Vec2f implements Transformable
     {
         if (vector != null)
         {
-            add(-vector.x, -vector.y);
+            sub(vector.x, vector.y);
         }
     }
 
+    public final void sub(final float x, final float y)
+    {
+        this.x -= x;
+        this.y -= y;
+        invalidate();
+    }
+
     /**
-     * Rotates this vector by the given radian angle. (positive value means
+     * Rotates this vector by the given degree angle. (positive value means
      * counterclockwise)
      *
      * @param radians
      *            The angle of rotation.
      */
-    public final void rotateRadians(final float radians)
+    public final void rotateDegrees(final float degrees)
+    {
+        rotate(VineMath.toRadians(degrees));
+    }
+
+    @Override
+    public final void rotate(final float radians)
     {
         final float cos = VineMath.cos(radians);
         final float sin = VineMath.sin(radians);
@@ -181,7 +205,7 @@ public class MutableVec2f extends Vec2f implements Transformable
      */
     public final void rotate180()
     {
-        uniformScale(-1);
+        uniformScale(-1.f);
     }
 
     /**
@@ -204,42 +228,40 @@ public class MutableVec2f extends Vec2f implements Transformable
         }
     }
 
-    /**
-     * Normalizes this vector.
-     */
-    public final void normalize()
-    {
-        if (VineMath.abs(x) + VineMath.abs(y) <= 2 * VEC2_EPSILON)
-        {
-            return;
-        }
-        final double inversedLength = 1 / length();
-        x *= inversedLength;
-        y *= inversedLength;
-    }
-
-    @Override
-    public final void translate(final float x, final float y)
-    {
-        add(x, y);
-    }
-
-    @Override
-    public final void rotate(final float degrees)
-    {
-        rotateRadians(VineMath.toRadians(degrees));
-    }
-
     @Override
     public final void scale(final float x, final float y)
     {
         this.x *= x;
         this.y *= y;
+        invalidate();
+    }
+
+    public final void scale(final Vec2f scaleVector)
+    {
+        x *= scaleVector.x;
+        y *= scaleVector.y;
+        invalidate();
     }
 
     @Override
     public final void uniformScale(final float factor)
     {
         scale(factor, factor);
+        length *= factor;
+    }
+
+    /**
+     * Normalizes this vector.
+     */
+    public final void normalize()
+    {
+        if (length() <= VEC2_EPSILON)
+        {
+            return;
+        }
+        final double inversedLength = 1.f / length();
+        x *= inversedLength;
+        y *= inversedLength;
+        length = 1;
     }
 }
