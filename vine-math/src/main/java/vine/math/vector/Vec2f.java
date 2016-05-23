@@ -1,8 +1,6 @@
 package vine.math.vector;
 
-import static vine.math.VineMath.abs;
 import static vine.math.VineMath.sqrt;
-import static vine.math.vector.Vec2Util.VEC2_EPSILON;
 
 import java.io.Serializable;
 
@@ -11,34 +9,37 @@ import vine.math.VineMath;
 /**
  * Represents a mathematical immutable vector 2d.
  *
- * Thread-safe.
+ * You may use MutableVec2f or derive your own vector to create a mutable
+ * version of Vec2f.
  *
  * @author Steffen
  *
  */
 public class Vec2f implements Serializable
 {
-    private static final long serialVersionUID = -48013626869712862L;
+    private static final long serialVersionUID   = -48013626869712862L;
+
+    private static final byte INVALIDATED_LENGTH = -1;
     /**
      * Vector that represents the x axis;
      */
-    public static final Vec2f X_AXIS           = new Vec2f(1, 0);
+    public static final Vec2f X_AXIS             = new Vec2f(1, 0);
     /**
      * Vector that represents the y axis;
      */
-    public static final Vec2f Y_AXIS           = new Vec2f(0, 1);
+    public static final Vec2f Y_AXIS             = new Vec2f(0, 1);
     /**
      * Vector that represents the x axis in negative direction;
      */
-    public static final Vec2f NEGATIV_X_AXIS   = new Vec2f(-1, 0);
+    public static final Vec2f NEGATIV_X_AXIS     = new Vec2f(-1, 0);
     /**
      * Vector that represents the y axis in negative direction;
      */
-    public static final Vec2f NEGATIVE_Y_AXIS  = new Vec2f(0, -1);
+    public static final Vec2f NEGATIVE_Y_AXIS    = new Vec2f(0, -1);
     /**
      * Zero vector.
      */
-    public static final Vec2f ZERO             = new Vec2f(0, 0);
+    public static final Vec2f ZERO               = new Vec2f(0, 0);
     /**
      * x Value of the vector.
      */
@@ -48,20 +49,21 @@ public class Vec2f implements Serializable
      */
     protected float           y;
 
-    protected float           length           = -1;
+    protected float           length             = INVALIDATED_LENGTH;
 
     /**
-     * Creates a zero vector.
+     * Creates a new vector of zero length.
      */
     public Vec2f()
     {
         // Empty constructor if you don't need to initialize the vector by
         // construction.
+        length = 0;
     }
 
     /**
      * Creates a new Vector2f object, that represents the mathematical vector 2d
-     * with the given float element.
+     * with the given elements.
      *
      * @param x
      *            The x value of the vector
@@ -82,13 +84,26 @@ public class Vec2f implements Serializable
      */
     public Vec2f(final Vec2f vector)
     {
+        if (vector == null)
+        {
+            throw new IllegalArgumentException("Tried to copy construct a Vec2f from null");
+        }
         x = vector.x;
         y = vector.y;
+        if (vector.length != INVALIDATED_LENGTH)
+        {
+            length = vector.length;
+        }
     }
 
-    public final void invalidate()
+    /**
+     * Invalidates cached calculations and recalculates them, if they are
+     * requested. (length of the vector).
+     *
+     */
+    protected final void invalidate()
     {
-        length = -1;
+        length = INVALIDATED_LENGTH;
     }
 
     /**
@@ -145,7 +160,7 @@ public class Vec2f implements Serializable
      */
     public final float length()
     {
-        if (length == -1)
+        if (length == INVALIDATED_LENGTH)
         {
             length = (float) Vec2Util.length(x, y);
         }
@@ -189,6 +204,20 @@ public class Vec2f implements Serializable
     }
 
     /**
+     * Returns the distance from the point defined by this Vec2f to the point
+     * defined by the given Vec2f.
+     *
+     * @param vector
+     *            Point to which the distance is calculated
+     * @return The distance to the given point or Float.MAX_VALUE if distance
+     *         could not be calculated.
+     */
+    public final float distance(final Vec2f vector)
+    {
+        return vector == null ? Float.MAX_VALUE : distance(vector.x, vector.y);
+    }
+
+    /**
      * Returns the distance from the point defined by the each element given
      * vector and this vector.
      *
@@ -199,19 +228,6 @@ public class Vec2f implements Serializable
     public final float distance(final float x, final float y)
     {
         return (float) sqrt(squaredDistance(x, y));
-    }
-
-    /**
-     * Returns the distance from the point defined by this Vec2f to the point
-     * defined by the given Vec2f.
-     *
-     * @param vector
-     *            Point to which the distance is calculated
-     * @return The distance to the given point
-     */
-    public final float distance(final Vec2f vector)
-    {
-        return vector == null ? Float.MAX_VALUE : distance(vector.x, vector.y);
     }
 
     /**
@@ -226,8 +242,10 @@ public class Vec2f implements Serializable
         if (vector == null)
         {
             return 0;
+        } else
+        {
+            return Vec2Util.getAngle(x, y, vector.x, vector.y);
         }
-        return Vec2Util.getAngle(x, y, vector.x, vector.y);
     }
 
     /**
@@ -235,40 +253,56 @@ public class Vec2f implements Serializable
      */
     public final boolean isNormalized()
     {
-        return abs(squaredLength() - 1) < VEC2_EPSILON;
+        return VineMath.isZero(squaredLength() - 1);
     }
 
     /**
-     * @param vector
-     *            The vector that is checked for equality.
-     * @return True, if the vector is numerical equal.
+     * Checks, if this vector is of length zero.
      *
-     * @see #equalWithEpsilon(float, float)
+     * @return True, if the length of this vector is zero.
      */
-    public final boolean equalWithEpsilon(final Vec2f vector)
+    public final boolean hasLengthZero()
+    {
+        return VineMath.isZero(x) && VineMath.isZero(y);
+    }
+
+    /**
+     * Returns true, if the given vector is equal to this vector (with error
+     * tolerance).
+     *
+     * @param vector
+     *            The vector, that is checked if it is equal to this vector
+     * @return True, if the vectors are equal with respect to numerical
+     *         inaccuracies.
+     *
+     * @see #equalByEps(float, float)
+     */
+    public final boolean equalByEps(final Vec2f vector)
     {
         if (vector == null)
         {
             return false;
+        } else
+        {
+            return equalByEps(vector.getX(), vector.getY());
         }
-        return equalWithEpsilon(vector.getX(), vector.getY());
     }
 
     /**
-     * Returns true, if the given vector is numerical equal to this vector (with
-     * error tolerance).
+     * Returns true, if the given vector is equal to this vector (with error
+     * tolerance).
      *
      * @param x
      *            x Coordinate of the compared vector.
      * @param y
      *            y Coordinate of the compared vector.
-     * @return True, if the vectors are numerical equal.
+     * @return True, if the vectors are equal with respect to numerical
+     *         inaccuracies.
+     * @see #equalByEps(Vec2f)
      */
-    public final boolean equalWithEpsilon(final float x, final float y)
+    public final boolean equalByEps(final float x, final float y)
     {
-        final float xDif = x - this.x;
-        final float yDif = y - this.y;
-        return VineMath.abs(xDif) + VineMath.abs(yDif) <= VEC2_EPSILON;
+        return VineMath.equalByEps(x, this.x) && VineMath.equalByEps(y, this.y);
     }
 
     @Override
@@ -282,22 +316,21 @@ public class Vec2f implements Serializable
         {
             return true;
         }
-        final Vec2f vector = (Vec2f) object;
-        return vector.x == x && vector.y == y;
+        return equalByEps((Vec2f) object);
     }
 
     @Override
     public int hashCode()
     {
-        int result = 1;
+        int result = 3;
         result = 5 * result + Float.floatToIntBits(x);
-        result = 11 * result + Float.floatToIntBits(y);
+        result = 7 * result + Float.floatToIntBits(y);
         return result;
     }
 
     @Override
     public String toString()
     {
-        return "Vector2f(" + x + "," + y + ")";
+        return "Vec2f(" + x + "," + y + ")";
     }
 }

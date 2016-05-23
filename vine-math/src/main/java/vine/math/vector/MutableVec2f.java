@@ -1,7 +1,5 @@
 package vine.math.vector;
 
-import static vine.math.vector.Vec2Util.VEC2_EPSILON;
-
 import vine.math.VineMath;
 import vine.math.geometry.Transformable;
 
@@ -255,7 +253,7 @@ public class MutableVec2f extends Vec2f implements Transformable
      */
     public final void normalize()
     {
-        if (length() <= VEC2_EPSILON)
+        if (hasLengthZero())
         {
             return;
         }

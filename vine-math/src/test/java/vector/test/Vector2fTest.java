@@ -37,7 +37,7 @@ public class Vector2fTest
         vector.sub(null);
         assertTrue(!vector.equals(new Vec2f(-2, 6)));
         vector.sub(vector);
-        assertTrue(vector.equalWithEpsilon(0, 0));
+        assertTrue(vector.equalByEps(0, 0));
         vector.translate(-2, 6);
         assertTrue(vector.equals(new Vec2f(-2, 6)));
     }
@@ -109,11 +109,11 @@ public class Vector2fTest
     {
         final Vec2f vec = new Vec2f(4, 5);
         final Vec2f vec2 = new Vec2f(4, 5 + Vec2Util.VEC2_EPSILON);
-        assertTrue(!vec.equalWithEpsilon(null));
-        assertTrue(vec2.equalWithEpsilon(4, 5));
-        assertTrue(vec.equalWithEpsilon(vec2));
+        assertTrue(!vec.equalByEps(null));
+        assertTrue(vec2.equalByEps(4, 5));
+        assertTrue(vec.equalByEps(vec2));
         assertTrue(!vec.equals(vec2));
-        assertTrue(!vec.equalWithEpsilon(5, 4));
+        assertTrue(!vec.equalByEps(5, 4));
     }
 
     @Test
@@ -182,14 +182,14 @@ public class Vector2fTest
         MutableVec2f vec = new MutableVec2f(vector);
         vec.rotate180();
         vec.rotate180();
-        assertTrue(vector.equalWithEpsilon(vec));
+        assertTrue(vector.equalByEps(vec));
         vec = new MutableVec2f(1, 1);
         vec.rotate90(false);
-        assertTrue(vec.equalWithEpsilon(-1, 1));
+        assertTrue(vec.equalByEps(-1, 1));
         vec.rotate90(true);
         vec.rotateDegrees(-90);
         final Vec2f v2 = new Vec2f(1, -1);
-        assertTrue(v2.equalWithEpsilon(vec));
+        assertTrue(v2.equalByEps(vec));
     }
 
     /**

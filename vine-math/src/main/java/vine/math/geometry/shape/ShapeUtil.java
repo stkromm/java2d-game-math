@@ -23,11 +23,8 @@ public final class ShapeUtil
 
     private static void addPointToAABB(final MutableAABB aabb, final Vec2f point)
     {
-        aabb.setX(VineMath.min(aabb.getX(), point.getX()));
-        aabb.setY(VineMath.min(aabb.getY(), point.getY()));
         aabb.setWidth(VineMath.max(aabb.getWidth(), point.getX() - aabb.getX()));
         aabb.setHeight(VineMath.max(aabb.getHeight(), point.getY() - aabb.getY()));
-
     }
 
     /**

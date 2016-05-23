@@ -14,6 +14,7 @@ public final class VineMath
     public static final double           PI       = 3.14159265358979323846;
     public static final float            TWO_PIF  = PIF * 2;
     public static final float            HALF_PIF = 3.14159265358979323846f * 0.5f;
+    public static final float            EPSILON  = 0.0001f;
 
     private VineMath()
     {
@@ -530,5 +531,15 @@ public final class VineMath
         { // value > 0.0, or value is NaN
             return (float) exp(power * log(value));
         }
+    }
+
+    public static boolean isZero(final float value)
+    {
+        return -value < VineMath.EPSILON && value < VineMath.EPSILON;
+    }
+
+    public static boolean equalByEps(final float val1, final float val2)
+    {
+        return VineMath.abs(val1 - val2) < EPSILON;
     }
 }

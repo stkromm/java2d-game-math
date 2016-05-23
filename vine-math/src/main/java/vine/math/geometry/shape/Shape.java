@@ -18,6 +18,9 @@ public interface Shape
     boolean contains(float x, float y);
 
     /**
+     * Checks if a point, given in object space coordinates of this shape, is
+     * contained in this shape.
+     *
      * @param point
      *            Point, that is checked for containment in the shape.
      * @return True, if the given point defined by a Vec2f is contained in the
@@ -26,6 +29,9 @@ public interface Shape
     boolean contains(Vec2f point);
 
     /**
+     * * Checks if a point, given in object space coordinates of this shape, is
+     * contained in this shape.
+     *
      * @return Calculates the area of the shape and returns it. The area is in
      *         unit that was used to define the points and geometry of the
      *         shape.

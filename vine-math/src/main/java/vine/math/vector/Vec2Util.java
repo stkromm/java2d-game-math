@@ -172,16 +172,16 @@ public final class Vec2Util
      */
     public static float getAngle(final float x1, final float y1, final float x2, final float y2)
     {
-        if (x1 == 0 && y1 == 0 || x2 == 0 && y2 == 0)
+        if (VineMath.isZero(x1 + y1) || VineMath.isZero(x2 + y2))
         {
-            return 0;
+            return 0.f;
         }
         if (x1 / x2 < 0 && y1 / y2 < 0)
         {
             return VineMath.PIF;
         }
         final float dot = dot(x1, y1, x2, y2);
-        if (VineMath.abs(dot) <= VEC2_EPSILON)
+        if (VineMath.isZero(dot))
         {
             return VineMath.HALF_PIF;
         }
@@ -189,7 +189,7 @@ public final class Vec2Util
         float angle = VineMath.atan2(pseudoCross, dot);
         if (angle <= VEC2_EPSILON - VineMath.PIF)
         {
-            angle = -1 * angle;
+            angle = -1.f * angle;
         }
         return angle;
     }
@@ -204,6 +204,10 @@ public final class Vec2Util
      */
     public static float getSlope(final Vec2f direction)
     {
+        if (direction == null)
+        {
+            return 0.f;
+        }
         return direction.getY() / direction.getX();
     }
 

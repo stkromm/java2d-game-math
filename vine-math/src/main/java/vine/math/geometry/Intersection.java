@@ -2,8 +2,8 @@ package vine.math.geometry;
 
 import vine.math.VineMath;
 import vine.math.geometry.shape.AABB;
-import vine.math.vector.Vec2f;
 import vine.math.vector.Vec2Util;
+import vine.math.vector.Vec2f;
 
 public final class Intersection
 {
@@ -74,8 +74,14 @@ public final class Intersection
             final Vec2f origin2,
             final Vec2f direction2)
     {
-        // TODO True if equal (same line)
-        return Vec2Util.getSlope(direction1) != Vec2Util.getSlope(direction2);
+        if (Vec2Util.getSlope(direction1) != Vec2Util.getSlope(direction2))
+        {
+            return true;
+        }
+        final float dis = origin1.distance(origin2);
+        final float x = origin1.getX() + direction1.getX() * dis;
+        final float y = origin1.getY() + direction1.getY() * dis;
+        return VineMath.equalByEps(x, origin2.getX()) && VineMath.equalByEps(y, origin2.getY());
     }
 
     public static boolean doesRayIntersectAabb(
