@@ -4,7 +4,8 @@ import vine.math.VineMath;
 import vine.math.geometry.Transformable;
 
 /*
- * Why does non method return this? This can be ambiguous if the returned vector is the same
+ * Method Chaining:
+ * It's ambiguous if the returned vector is the same
  * instance or a new instance.
  * I think the convenience of method chaining is in this case not worth this danger of not
  * knowing when new objects are created.
@@ -167,6 +168,14 @@ public class MutableVec2f extends Vec2f implements Transformable
         }
     }
 
+    /**
+     * Substracts the each element given vector from this vector.
+     *
+     * @param x
+     *            The x element of the subtracted vector
+     * @param y
+     *            The y element of the subtracted vector
+     */
     public final void sub(final float x, final float y)
     {
         this.x -= x;
@@ -234,8 +243,20 @@ public class MutableVec2f extends Vec2f implements Transformable
         invalidate();
     }
 
+    /**
+     * Scales this vector with the given vector. Each element of this vector is
+     * scaled by the factor given by the corresponding element of the given
+     * vector.
+     *
+     * @param scaleVector
+     *            The vector with scale factors.
+     */
     public final void scale(final Vec2f scaleVector)
     {
+        if (scaleVector == null)
+        {
+            return;
+        }
         x *= scaleVector.x;
         y *= scaleVector.y;
         invalidate();
@@ -245,7 +266,7 @@ public class MutableVec2f extends Vec2f implements Transformable
     public final void uniformScale(final float factor)
     {
         scale(factor, factor);
-        length *= factor;
+        cachedLength *= factor;
     }
 
     /**
@@ -253,13 +274,19 @@ public class MutableVec2f extends Vec2f implements Transformable
      */
     public final void normalize()
     {
-        if (hasLengthZero())
+        if (isNearlyZero())
         {
             return;
         }
         final double inversedLength = 1.f / length();
         x *= inversedLength;
         y *= inversedLength;
-        length = 1;
+        cachedLength = 1;
+    }
+
+    public final void lerp(final Vec2f vector, final float alpha)
+    {
+        x = VineMath.lerp(x, vector.x, alpha);
+        y = VineMath.lerp(y, vector.y, alpha);
     }
 }

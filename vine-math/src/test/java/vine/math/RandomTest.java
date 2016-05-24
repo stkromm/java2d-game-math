@@ -26,6 +26,6 @@ public class RandomTest
         System.out.println(x);
         System.out.println(Math.pow(5, 2.0));
         b = System.nanoTime() - time;
-        System.out.println(a + " , " + b);
+        System.out.println(a / 1000f + " , " + b / 1000f);
     }
 }

@@ -74,14 +74,14 @@ public final class Intersection
             final Vec2f origin2,
             final Vec2f direction2)
     {
-        if (Vec2Util.getSlope(direction1) != Vec2Util.getSlope(direction2))
+        if (direction1.getSlope() != direction2.getSlope())
         {
             return true;
         }
         final float dis = origin1.distance(origin2);
         final float x = origin1.getX() + direction1.getX() * dis;
         final float y = origin1.getY() + direction1.getY() * dis;
-        return VineMath.equalByEps(x, origin2.getX()) && VineMath.equalByEps(y, origin2.getY());
+        return VineMath.isNearlyEqual(x, origin2.getX()) && VineMath.isNearlyEqual(y, origin2.getY());
     }
 
     public static boolean doesRayIntersectAabb(

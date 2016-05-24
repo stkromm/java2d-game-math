@@ -18,12 +18,6 @@ import vine.math.VineMath;
  */
 public final class Vec2Util
 {
-    /**
-     * Maximum difference two floating point values can have and still count as
-     * equal.
-     */
-    public static final float VEC2_EPSILON = 0.000001f;
-
     private Vec2Util()
     {
         // Utility class
@@ -38,7 +32,7 @@ public final class Vec2Util
      *            The y coordinate of the vector
      * @return The length of the elementwise given 2d vector.
      */
-    public static double length(final double x, final double y)
+    public static double length(final float x, final float y)
     {
         return VineMath.sqrt(dot(x, y, x, y));
     }
@@ -53,20 +47,6 @@ public final class Vec2Util
      * @return The squared length of the elementwise given 2d vector.
      */
     public static float squaredLength(final float x, final float y)
-    {
-        return dot(x, y, x, y);
-    }
-
-    /**
-     * Calculates the squared length of the given vector.
-     *
-     * @param x
-     *            The x coordinate of the vector
-     * @param y
-     *            The y coordinate of the vector
-     * @return The squared length of the elementwise given 2d vector.
-     */
-    public static double squaredLength(final double x, final double y)
     {
         return dot(x, y, x, y);
     }
@@ -87,43 +67,6 @@ public final class Vec2Util
     public static float dot(final float x1, final float y1, final float x2, final float y2)
     {
         return x2 * x1 + y2 * y1;
-    }
-
-    /**
-     * Calculates the dot product of the elementwise given 2 2d vectors.
-     *
-     * @param x1
-     *            The x coordinate of the 1st vector
-     * @param y1
-     *            The y coordinate of the 1st vector
-     * @param x2
-     *            The x coordinate of the 2nd vector
-     * @param y2
-     *            The y coordinate of the 2nd vector
-     * @return The value of the 2d dot product of the given vectors
-     */
-    public static double dot(final double x1, final double y1, final double x2, final double y2)
-    {
-        return x2 * x1 + y2 * y1;
-    }
-
-    /**
-     * Calculates the cross product of the each element given 2 2d vectors.
-     *
-     * @param x1
-     *            The x coordinate of the 1st vector
-     * @param y1
-     *            The y coordinate of the 1st vector
-     * @param x2
-     *            The x coordinate of the 2nd vector
-     * @param y2
-     *            The y coordinate of the 2nd vector
-     * @return The value of the 2d cross product of the given vectors
-     * @see #pseudoCross(double, double, double, double)
-     */
-    public static float pseudoCross(final float x1, final float y1, final float x2, final float y2)
-    {
-        return x1 * y2 - x2 * y1;
     }
 
     /**
@@ -149,7 +92,7 @@ public final class Vec2Util
      *            The y coordinate of the 2nd vector
      * @return The value of the 2d cross product of the given vectors
      */
-    public static double pseudoCross(final double x1, final double y1, final double x2, final double y2)
+    public static float pseudoCross(final float x1, final float y1, final float x2, final float y2)
     {
         return x1 * y2 - x2 * y1;
     }
@@ -172,26 +115,59 @@ public final class Vec2Util
      */
     public static float getAngle(final float x1, final float y1, final float x2, final float y2)
     {
-        if (VineMath.isZero(x1 + y1) || VineMath.isZero(x2 + y2))
+        if (VineMath.isNearlyZero(x1) && VineMath.isNearlyZero(y1)
+                || VineMath.isNearlyZero(x2) && VineMath.isNearlyZero(y2))
         {
             return 0.f;
         }
-        if (x1 / x2 < 0 && y1 / y2 < 0)
-        {
-            return VineMath.PIF;
-        }
         final float dot = dot(x1, y1, x2, y2);
-        if (VineMath.isZero(dot))
+
+        // Check if the vectors are perpendicular
+        if (VineMath.isNearlyZero(dot))
         {
             return VineMath.HALF_PIF;
         }
         final float pseudoCross = pseudoCross(x1, y1, x2, y2);
-        float angle = VineMath.atan2(pseudoCross, dot);
-        if (angle <= VEC2_EPSILON - VineMath.PIF)
+
+        // Check if the vectors are collinear directions
+        if (VineMath.isNearlyZero(pseudoCross))
         {
-            angle = -1.f * angle;
+            // Opposite direction
+            if (dot < -VineMath.EPSILON)
+            {
+                return VineMath.PIF;
+            }
+            // Because we know the vectors are collinear, but not opposite
+            // directions, they must have the same direction.
+            else
+            {
+                return 0.f;
+            }
+        }
+        float angle = VineMath.atan2(pseudoCross, dot);
+        if (angle > VineMath.PIF)
+        {
+            angle -= VineMath.TWO_PIF;
+        } else if (angle < -VineMath.PIF)
+        {
+            angle += VineMath.TWO_PIF;
         }
         return angle;
+    }
+
+    public static boolean isCollinear(final float x1, final float y1, final float x2, final float y2)
+    {
+        return VineMath.isNearlyZero(pseudoCross(x1, y1, x2, y2));
+    }
+
+    public static boolean isSameDirection(final float x1, final float y1, final float x2, final float y2)
+    {
+        return isCollinear(x1, y1, x2, y2) && dot(x1, y1, x2, y2) > VineMath.EPSILON;
+    }
+
+    public static boolean isOppositeDirection(final float x1, final float y1, final float x2, final float y2)
+    {
+        return isCollinear(x1, y1, x2, y2) && dot(x1, y1, x2, y2) < -VineMath.EPSILON;
     }
 
     /**
@@ -202,13 +178,15 @@ public final class Vec2Util
      *            The direction whichs slope is calculated
      * @return The slope of the given direction
      */
-    public static float getSlope(final Vec2f direction)
+    public static float getSlope(final float x, final float y)
     {
-        if (direction == null)
+        if (VineMath.isNearlyZero(x))
         {
-            return 0.f;
+            return Float.MAX_VALUE;
+        } else
+        {
+            return y / x;
         }
-        return direction.getY() / direction.getX();
     }
 
 }

@@ -49,7 +49,7 @@ public class Vec2f implements Serializable
      */
     protected float           y;
 
-    protected float           length             = INVALIDATED_LENGTH;
+    protected float           cachedLength       = INVALIDATED_LENGTH;
 
     /**
      * Creates a new vector of zero length.
@@ -58,7 +58,7 @@ public class Vec2f implements Serializable
     {
         // Empty constructor if you don't need to initialize the vector by
         // construction.
-        length = 0;
+        cachedLength = 0;
     }
 
     /**
@@ -90,9 +90,9 @@ public class Vec2f implements Serializable
         }
         x = vector.x;
         y = vector.y;
-        if (vector.length != INVALIDATED_LENGTH)
+        if (vector.cachedLength != INVALIDATED_LENGTH)
         {
-            length = vector.length;
+            cachedLength = vector.cachedLength;
         }
     }
 
@@ -103,7 +103,7 @@ public class Vec2f implements Serializable
      */
     protected final void invalidate()
     {
-        length = INVALIDATED_LENGTH;
+        cachedLength = INVALIDATED_LENGTH;
     }
 
     /**
@@ -153,6 +153,11 @@ public class Vec2f implements Serializable
         return vector == null ? 0 : Vec2Util.dot(x, y, vector.getX(), vector.getY());
     }
 
+    public final float dot(final float x, final float y)
+    {
+        return Vec2Util.dot(this.x, this.y, x, y);
+    }
+
     /**
      * Calculates the length of this Vector2f.
      *
@@ -160,11 +165,11 @@ public class Vec2f implements Serializable
      */
     public final float length()
     {
-        if (length == INVALIDATED_LENGTH)
+        if (cachedLength == INVALIDATED_LENGTH)
         {
-            length = (float) Vec2Util.length(x, y);
+            cachedLength = (float) Vec2Util.length(x, y);
         }
-        return length;
+        return cachedLength;
     }
 
     /**
@@ -237,23 +242,30 @@ public class Vec2f implements Serializable
      *            The vector that angle between this vector is calculated
      * @return The angle between this and the given vector
      */
-    public final double getAngle(final Vec2f vector)
+    public final float getAngle(final Vec2f vector)
     {
         if (vector == null)
         {
             return 0;
         } else
         {
-            return Vec2Util.getAngle(x, y, vector.x, vector.y);
+            return getAngle(vector.x, vector.y);
         }
     }
 
+    public final float getAngle(final float x, final float y)
+    {
+        return Vec2Util.getAngle(this.x, this.y, x, y);
+    }
+
     /**
-     * @return True, if the vector is normalized, that is, length == 1
+     * Checks, if this vector is normalized.
+     *
+     * @return True, if the vector is normalized, that is, length == 1 +- 1e-7
      */
     public final boolean isNormalized()
     {
-        return VineMath.isZero(squaredLength() - 1);
+        return VineMath.isNearlyEqual(squaredLength() - 1, VineMath.EPSILON * 0.1f);
     }
 
     /**
@@ -261,9 +273,20 @@ public class Vec2f implements Serializable
      *
      * @return True, if the length of this vector is zero.
      */
-    public final boolean hasLengthZero()
+    public final boolean isNearlyZero()
     {
-        return VineMath.isZero(x) && VineMath.isZero(y);
+        return VineMath.isNearlyZero(x) && VineMath.isNearlyZero(y);
+    }
+
+    /**
+     * Calculates the slope of this vector, if interpreted as a direction in
+     * space.
+     *
+     * @return The slope of the direction defined by this vector.
+     */
+    public final float getSlope()
+    {
+        return Vec2Util.getSlope(x, y);
     }
 
     /**
@@ -277,14 +300,14 @@ public class Vec2f implements Serializable
      *
      * @see #equalByEps(float, float)
      */
-    public final boolean equalByEps(final Vec2f vector)
+    public final boolean nearlyEquals(final Vec2f vector)
     {
         if (vector == null)
         {
             return false;
         } else
         {
-            return equalByEps(vector.getX(), vector.getY());
+            return nearlyEquals(vector.getX(), vector.getY());
         }
     }
 
@@ -300,9 +323,9 @@ public class Vec2f implements Serializable
      *         inaccuracies.
      * @see #equalByEps(Vec2f)
      */
-    public final boolean equalByEps(final float x, final float y)
+    public final boolean nearlyEquals(final float x, final float y)
     {
-        return VineMath.equalByEps(x, this.x) && VineMath.equalByEps(y, this.y);
+        return VineMath.isNearlyEqual(x, this.x) && VineMath.isNearlyEqual(y, this.y);
     }
 
     @Override
@@ -316,15 +339,16 @@ public class Vec2f implements Serializable
         {
             return true;
         }
-        return equalByEps((Vec2f) object);
+        final Vec2f vector = (Vec2f) object;
+        return vector.x == x && vector.y == y;
     }
 
     @Override
     public int hashCode()
     {
-        int result = 3;
-        result = 5 * result + Float.floatToIntBits(x);
-        result = 7 * result + Float.floatToIntBits(y);
+        int result = 2;
+        result = 5 * result + Float.floatToRawIntBits(x);
+        result = 7 * result + Float.floatToRawIntBits(y);
         return result;
     }
 

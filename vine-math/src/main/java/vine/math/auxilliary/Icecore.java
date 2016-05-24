@@ -2,10 +2,11 @@ package vine.math.auxilliary;
 
 import vine.math.VineMath;
 
-///////////////////////////////////////
-// Icecore's atan2 ( http://www.java-gaming.org/topics/extremely-fast-atan2/36467/msg/346145/view.html#msg346145 )
-///////////////////////////////////////
-
+/**
+ * Icecore's atan2 (
+ * http://www.java-gaming.org/topics/extremely-fast-atan2/36467/msg/346145/view.
+ * html#msg346145 )
+ */
 public final class Icecore
 {
 

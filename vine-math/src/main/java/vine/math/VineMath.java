@@ -7,18 +7,58 @@ import vine.math.auxilliary.Xorshift128Plus;
 
 public final class VineMath
 {
-    private static final Xorshift128Plus RANDOM   = new Xorshift128Plus();
-    private static final int             ONE_BIT  = 1;
-
-    public static final float            PIF      = 3.14159265358979323846f;
-    public static final double           PI       = 3.14159265358979323846;
-    public static final float            TWO_PIF  = PIF * 2;
-    public static final float            HALF_PIF = 3.14159265358979323846f * 0.5f;
-    public static final float            EPSILON  = 0.0001f;
+    private static final Xorshift128Plus RANDOM            = new Xorshift128Plus();
+    private static final int             ONE_BIT           = 1;
+    public static final float            FLOAT_ROUND_SHIFT = 0.5f;
+    public static final int              FLOAT_ROUND_INT   = VineMath.pow(2, 14);
+    public static final float            PIF               = 3.14159265358979323846f;
+    public static final double           PI                = 3.14159265358979323846;
+    public static final float            TWO_PIF           = PIF * 2;
+    public static final float            HALF_PIF          = PIF * 0.5f;
+    /**
+     * Standard floating point error of 1e-6.
+     */
+    public static final float            EPSILON           = 0.000001f;
 
     private VineMath()
     {
         // Utility class
+    }
+
+    /**
+     * Unwinds the given radians and returns a new radian value in the interval
+     * {@code [-2Pi,2Pi]}
+     */
+    public static float unwindRadians(final float angle)
+    {
+        float d = angle;
+        while (d > PIF)
+        {
+            d -= TWO_PIF;
+        }
+        while (d < -PIF)
+        {
+            d += TWO_PIF;
+        }
+        return d;
+    }
+
+    /**
+     * Unwinds the given degrees and returns new degree value in the interval
+     * {@code [-180,180]}
+     */
+    public static float unwindDegrees(final float angle)
+    {
+        float d = angle;
+        while (d > 180.f)
+        {
+            d -= 360.f;
+        }
+        while (d < -180.f)
+        {
+            d += 360.f;
+        }
+        return d;
     }
 
     /**
@@ -86,9 +126,9 @@ public final class VineMath
      * @param b
      * @return
      */
-    public static double pow(final double a, final double b)
+    public static float pow(final double a, final double b)
     {
-        return StrictMath.pow(a, b);
+        return (float) StrictMath.pow(a, b);
     }
 
     /**
@@ -115,13 +155,37 @@ public final class VineMath
     }
 
     /**
+     * https://github.com/jeffhain/jafama/blob/master/src/main/java/net/jafama/
+     * FastMath.java 1e-13ish accuracy or better on whole double range.
+     *
+     * @param value
+     *            A double value.
+     * @param power
+     *            A power.
+     * @return value^power.
+     */
+    public static float fastPow(final float value, final float power)
+    {
+        if (power == 0.0)
+        {
+            return 1.0f;
+        } else if (power == 1.0)
+        {
+            return value;
+        } else
+        {
+            return exp(power * log(value));
+        }
+    }
+
+    /**
      *
      * @param value
      * @return
      */
-    public static double exp(final double value)
+    public static float exp(final double value)
     {
-        return Math.exp(value);
+        return (float) Math.exp(value);
     }
 
     /**
@@ -143,9 +207,9 @@ public final class VineMath
      * @param value
      * @return
      */
-    public static double log(final double value)
+    public static float log(final double value)
     {
-        return Math.log(value);
+        return (float) Math.log(value);
     }
 
     /**
@@ -159,9 +223,7 @@ public final class VineMath
     }
 
     /**
-     *
-     * @param value
-     * @return
+     * Returns the absolute value of the given value.
      */
     public static int abs(final int value)
     {
@@ -169,9 +231,7 @@ public final class VineMath
     }
 
     /**
-     *
-     * @param value
-     * @return
+     * Returns the absolute value of the given value.
      */
     public static float abs(final float value)
     {
@@ -179,10 +239,13 @@ public final class VineMath
     }
 
     /**
+     * Calculates the maximum of both values.
      *
      * @param x
+     *            The 1st value
      * @param y
-     * @return
+     *            The 2nd value
+     * @return The maximum of the given values.
      */
     public static float max(final float x, final float y)
     {
@@ -190,10 +253,13 @@ public final class VineMath
     }
 
     /**
+     * Calculates the minimum of both values.
      *
      * @param x
+     *            The 1st value
      * @param y
-     * @return
+     *            The 2nd value
+     * @return The minium of the given values.
      */
     public static float min(final float x, final float y)
     {
@@ -201,10 +267,13 @@ public final class VineMath
     }
 
     /**
+     * Calculates the maximum of both values.
      *
      * @param x
+     *            The 1st value
      * @param y
-     * @return
+     *            The 2nd value
+     * @return The maximum of the given values.
      */
     public static int max(final int x, final int y)
     {
@@ -212,10 +281,13 @@ public final class VineMath
     }
 
     /**
+     * Calculates the minimum of both values.
      *
      * @param x
+     *            The 1st value
      * @param y
-     * @return
+     *            The 2nd value
+     * @return The minium of the given values.
      */
     public static int min(final int x, final int y)
     {
@@ -223,23 +295,27 @@ public final class VineMath
     }
 
     /**
+     * Checks, if the given value if even.
      *
      * @param value
-     * @return
+     *            The checked value
+     * @return True, if the given value is even
      */
     public static boolean isEven(final int value)
     {
-        return value % 2 == 0;
+        return (value & 1) == 0;
     }
 
     /**
+     * Checks, if the given value is odd.
      *
      * @param value
-     * @return
+     *            The checked value
+     * @return True, if the given value is odd.
      */
     public static boolean isOdd(final int value)
     {
-        return value % 2 == 1;
+        return (value & 1) == 1;
     }
 
     /**
@@ -251,8 +327,7 @@ public final class VineMath
      */
     public static boolean isPowerOfTwo(final int value)
     {
-        // LibGdx impl
-        return value != 0 && (value & value - 1) == 0;
+        return (value & value - 1) == 0;
     }
 
     /**
@@ -280,11 +355,15 @@ public final class VineMath
     }
 
     /**
+     * Clamps the given value to the interval [min,max]
      *
      * @param value
+     *            The value that should be clamped
      * @param min
+     *            The lower interval border
      * @param max
-     * @return
+     *            The upper interval border
+     * @return the clamped value
      */
     public static int clamp(final int value, final int min, final int max)
     {
@@ -317,9 +396,11 @@ public final class VineMath
     }
 
     /**
+     * Clamps a negative value to zero
      *
      * @param value
-     * @return
+     *            The value that should be clamped
+     * @return The clamped value
      */
     public static int clampPositive(final int value)
     {
@@ -331,11 +412,15 @@ public final class VineMath
     }
 
     /**
+     * Repeats the given value in the interval {@code [min,max-1]}
      *
      * @param value
+     *            The repeated value
      * @param min
+     *            The lower border of the repeat interval
      * @param max
-     * @return
+     *            The supremum of the repeat interval
+     * @return A repeated value in the given interval.
      */
     public static int repeat(final int value, final int min, final int max)
     {
@@ -352,6 +437,49 @@ public final class VineMath
     }
 
     /**
+     * Repeats the given value in the interval {@code [min,max-1]}
+     *
+     * @param value
+     *            The repeated value
+     * @param min
+     *            The lower border of the repeat interval
+     * @param max
+     *            The supremum of the repeat interval
+     * @return A repeated value in the given interval.
+     */
+    public static float repeat(final float value, final float min, final float max)
+    {
+        if (value > max)
+        {
+            return min + value % (max - min);
+        } else if (value <= min)
+        {
+            return max - (min - value);
+        } else
+        {
+            return value;
+        }
+    }
+
+    /**
+     * Checks if the given {@code value} lies in the interval [
+     * {@code min,@code max].
+     *
+     * @param value
+     *            Value, that is checked for containment in the given interval.
+     * @param min
+     *            Lower border of the interval
+     * @param max
+     *            Upper border of the interval
+     * @return True, if {@code value} lies in the given interval.
+     */
+    public static boolean isBetween(final double value, final double min, final double max)
+    {
+        assert min < max : "Called isBetween with false interval. min < max";
+        return value >= min && value <= max;
+    }
+
+    /**
      * Returns an random integer in the interval [0,max)
      *
      * @param max
@@ -360,26 +488,72 @@ public final class VineMath
      */
     public static int randomInteger(final int max)
     {
-        return StrictMath.round(randomFloat(max));
+        return VineMath.round(randomFloat(max));
     }
 
     /**
-     * Returns an random float in the interval [0,max)
+     * Calculates a random float in the given interval [{@code min},{@code max}
+     * ). Result may be undefined if {@code min > max}.
+     *
+     * @param min
+     * @param max
+     * @return
+     */
+    public static float randomFloat(final float min, final float max)
+    {
+        assert min <= max : "Interval for random float is in wrong order. min > max";
+        return RANDOM.nextFloat() * (max - min) + min;
+    }
+
+    /**
+     * Returns an random {@code float} in the interval {@code [0,max) }
      *
      * @param max
      *            The supremum of the interval of possible returned values.
      * @return The random value in the interval
      */
-    public static float randomFloat(final int max)
+    public static float randomFloat(final float max)
     {
         return RANDOM.nextFloat() * max;
     }
 
-    // Trigonometric functions
     /**
+     * Calculates a new random {@code float} in the interval {@code [0,1)}
+     *
+     * @return A new random {@code float} in the interval {@code [0,1)}
+     */
+    public static float random()
+    {
+        return RANDOM.nextFloat();
+    }
+
+    /**
+     * Linear interpolates between the values {@code a} and {@code b} with the
+     * given lerp value {@code alpha}, which has to be in the interval [0,1].
+     *
+     * @param a
+     *            The 1st value
+     * @param b
+     *            The 2nd value
+     * @param alpha
+     *            Value used to linear interpolate between {@code a} and
+     *            {@code b}. A value of 0 will result in returning the value
+     *            {@code a}, a value of 1 will result in returning the value
+     *            {@code b}.
+     * @return The linear interpolation of {@code a} and {@code b} evaluated
+     *         with {@code alpha}
+     */
+    public static float lerp(final float a, final float b, final float alpha)
+    {
+        return a * (1 - alpha) + b * alpha;
+    }
+
+    /**
+     * Calculates the sin of the given radian value.
      *
      * @param rad
-     * @return
+     *            Radian input value for the sin function.
+     * @return Value of sin for the given radian value {@code rad}
      */
     public static float sin(final float rad)
     {
@@ -439,107 +613,95 @@ public final class VineMath
         return angle * (1 / 180.f) * PIF;
     }
 
-    private static double TWO_POW_52 = Math.pow(2, 52);
-
     /**
-     * https://github.com/jeffhain/jafama/blob/master/src/main/java/net/jafama/
-     * FastMath.java 1e-13ish accuracy or better on whole double range.
+     * Checks, if the given value is nearly equal to zero.
      *
      * @param value
-     *            A double value.
-     * @param power
-     *            A power.
-     * @return value^power.
+     *            The value, that is compared with zero.
+     * @return True, if the given value is near zero with a maximum difference
+     *         of {@link #EPSILON}.
+     * @see {@link #isNearlyZero(float, float)} with {@link #EPSILON}
      */
-    public static float fastPow(final float value, final float power)
+    public static boolean isNearlyZero(final float value)
     {
-        if (power == 0.0)
-        {
-            return 1.0f;
-        } else if (power == 1.0)
-        {
-            return value;
-        }
-        if (value <= 0.0)
-        {
-            // powerInfo: 0 if not integer, 1 if even integer, -1 if odd integer
-            int powerInfo;
-            if (Math.abs(power) >= TWO_POW_52 * 2)
-            {
-                // The binary digit just before comma is outside mantissa,
-                // thus it is always 0: power is an even integer.
-                powerInfo = 1;
-            } else
-            {
-                // If power's magnitude permits, we cast into int instead of
-                // into long,
-                // as it is faster.
-                if (Math.abs(power) <= Integer.MAX_VALUE)
-                {
-                    final int powerAsInt = (int) power;
-                    if (power == powerAsInt)
-                    {
-                        powerInfo = (powerAsInt & 1) == 0 ? 1 : -1;
-                    } else
-                    { // power is not an integer (and not NaN, due to test
-                      // against Integer.MAX_VALUE)
-                        powerInfo = 0;
-                    }
-                } else
-                {
-                    final long powerAsLong = (long) power;
-                    if (power == powerAsLong)
-                    {
-                        powerInfo = (powerAsLong & 1) == 0 ? 1 : -1;
-                    } else
-                    { // power is not an integer, or is NaN
-                        if (power != power)
-                        {
-                            return Float.NaN;
-                        }
-                        powerInfo = 0;
-                    }
-                }
-            }
-
-            if (value == 0.0)
-            {
-                if (power < 0.0)
-                {
-                    return powerInfo < 0 ? 1 / value : Float.POSITIVE_INFINITY;
-                } else
-                { // power > 0.0 (0 and NaN cases already treated)
-                    return powerInfo < 0 ? value : 0.0f;
-                }
-            } else
-            { // value < 0.0
-                if (value == Double.NEGATIVE_INFINITY)
-                {
-                    if (powerInfo < 0)
-                    { // power odd integer
-                        return power < 0.0 ? -0.0f : Float.NEGATIVE_INFINITY;
-                    } else
-                    { // power even integer, or not an integer
-                        return power < 0.0 ? 0.0f : Float.POSITIVE_INFINITY;
-                    }
-                } else
-                {
-                    return powerInfo == 0 ? Float.NaN : powerInfo * (float) VineMath.exp(power * VineMath.log(-value));
-                }
-            }
-        } else
-        { // value > 0.0, or value is NaN
-            return (float) exp(power * log(value));
-        }
+        return isNearlyZero(value, EPSILON);
     }
 
-    public static boolean isZero(final float value)
+    /**
+     * Checks, if the given value is nearly equal to zero.
+     *
+     * @param value
+     *            The value, that is compared with zero.
+     * @param epsilon
+     *            The maximum difference of the value can have and still count
+     *            as zero.
+     * @return True, if the given value is near zero with a maximum difference
+     *         of {@link epsilon}.
+     */
+    public static boolean isNearlyZero(final float value, final float epsilon)
     {
-        return -value < VineMath.EPSILON && value < VineMath.EPSILON;
+        return value <= epsilon && -value <= epsilon;
     }
 
-    public static boolean equalByEps(final float val1, final float val2)
+    /**
+     * Checks if the given {@code float} numbers are nearly equal.
+     *
+     * @param val1
+     *            The 1st value to compare
+     * @param val2
+     *            The 2nd value to compare
+     * @see {@link #isNearlyEqual(float, float, float)} with {@link #EPSILON}
+     */
+    public static boolean isNearlyEqual(final float val1, final float val2)
     {
-        return VineMath.abs(val1 - val2) < EPSILON;
+        return isNearlyEqual(val1, val2, EPSILON);
+    }
+
+    /**
+     * Checks if the given {@code float} numbers are nearly equal.
+     *
+     * @param val1
+     *            The 1st value to compare
+     * @param val2
+     *            The 2nd value to compare
+     * @param epsilon
+     *            The epsilon that limits the tolerated difference of both
+     *            numbers
+     * @return True, if the deviation of both numbers is within [0,
+     *         {@code epsilon}].
+     */
+    public static boolean isNearlyEqual(final float val1, final float val2, final float epsilon)
+    {
+        return val1 > val2 ? val1 - val2 <= epsilon : val2 - val1 <= epsilon;
+    }
+
+    /**
+     * <p>
+     * From libgdx MathUtils.
+     * </p>
+     * Returns the closest integer to the specified float. This method will only
+     * properly round floats from -(2^14) to (Float.MAX_VALUE - 2^14).
+     *
+     * @param value
+     *            The value, that should be rounded
+     * @return A value, that is the rounded input value
+     */
+    static public int round(final float value)
+    {
+        return (int) (value + FLOAT_ROUND_INT + FLOAT_ROUND_SHIFT) - FLOAT_ROUND_INT;
+    }
+
+    /**
+     * Rounds a positive {@code float} to the nearest {@code integer} value. The
+     * result in not defined for negative values.
+     *
+     * @param value
+     *            The value, that should be rounded
+     * @return A value, that is the rounded input value
+     */
+    public static int roundPositive(final float value)
+    {
+        assert value > -FLOAT_ROUND_SHIFT - EPSILON : "Tried to round positive negative value " + value;
+        return (int) (value + FLOAT_ROUND_SHIFT);
     }
 }
