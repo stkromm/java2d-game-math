@@ -1,6 +1,6 @@
 package vine.math.vector;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 /**
  * Represents a immutable three-dimensional vector with single floating point
@@ -142,7 +142,7 @@ public class Vec3f
     {
         if (calculatedLength == -1)
         {
-            calculatedLength = VineMath.sqrt(dot(this));
+            calculatedLength = GMath.sqrt(dot(this));
         }
         return calculatedLength;
     }
@@ -209,7 +209,7 @@ public class Vec3f
         }
         final Vec3f vector = (Vec3f) object;
         final float diff = vector.x - x + vector.y - y + vector.z - z;
-        return VineMath.abs(diff) <= 3 * EPSILON;
+        return GMath.abs(diff) <= 3 * EPSILON;
     }
 
     @Override

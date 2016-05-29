@@ -1,6 +1,6 @@
 package vine.math.auxilliary;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 /**
  * Icecore's atan2 (
@@ -12,7 +12,7 @@ public final class Icecore
 
     private static final int   SIZE_ACC    = 100000;
     private static final int   SIZE_AR     = SIZE_ACC + 1;
-    private static final float PI_H        = VineMath.PIF / 2;
+    private static final float PI_H        = GMath.PIF / 2;
 
     private static final float ATAN2_S[]   = new float[SIZE_AR];
     private static final float ATAN2_PM[]  = new float[SIZE_AR];
@@ -32,9 +32,9 @@ public final class Icecore
             final double y = d;
             final float v = (float) Math.atan2(y, 1);
             ATAN2_S[i] = v;
-            ATAN2_PM[i] = VineMath.PIF - v;
+            ATAN2_PM[i] = GMath.PIF - v;
             ATAN2_MP[i] = -v;
-            ATAN2_MM[i] = -VineMath.PIF + v;
+            ATAN2_MM[i] = -GMath.PIF + v;
 
             ATAN2_R[i] = PI_H - v;
             ATAN2_RPM[i] = PI_H + v;

@@ -1,6 +1,7 @@
 package vine.math.vector;
 
-import vine.math.VineMath;
+import vine.math.Interpolation;
+import vine.math.GMath;
 import vine.math.geometry.Transformable;
 
 /*
@@ -192,14 +193,14 @@ public class MutableVec2f extends Vec2f implements Transformable
      */
     public final void rotateDegrees(final float degrees)
     {
-        rotate(VineMath.toRadians(degrees));
+        rotate(GMath.toRadians(degrees));
     }
 
     @Override
     public final void rotate(final float radians)
     {
-        final float cos = VineMath.cos(radians);
-        final float sin = VineMath.sin(radians);
+        final float cos = GMath.cos(radians);
+        final float sin = GMath.sin(radians);
 
         final float newX = x * cos - y * sin;
         final float newY = x * sin + y * cos;
@@ -286,7 +287,7 @@ public class MutableVec2f extends Vec2f implements Transformable
 
     public final void lerp(final Vec2f vector, final float alpha)
     {
-        x = VineMath.lerp(x, vector.x, alpha);
-        y = VineMath.lerp(y, vector.y, alpha);
+        x = Interpolation.lerp(x, vector.x, alpha);
+        y = Interpolation.lerp(y, vector.y, alpha);
     }
 }

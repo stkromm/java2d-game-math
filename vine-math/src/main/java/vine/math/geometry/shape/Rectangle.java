@@ -3,7 +3,7 @@ package vine.math.geometry.shape;
 import java.io.Serializable;
 
 import vine.math.vector.Vec2f;
-import vine.math.vector.Vec2Util;
+import vine.math.vector.VectorUtils;
 
 public class Rectangle implements Shape, Serializable
 {
@@ -54,8 +54,8 @@ public class Rectangle implements Shape, Serializable
         lowerRightY = y2;
         upperLeftX = x3;
         upperLeftY = y3;
-        height = (float) Vec2Util.length(x3 - x1, y3 - y1);
-        width = (float) Vec2Util.length(x2 - x1, y2 - y1);
+        height = (float) VectorUtils.length(x3 - x1, y3 - y1);
+        width = (float) VectorUtils.length(x2 - x1, y2 - y1);
     }
 
     /**

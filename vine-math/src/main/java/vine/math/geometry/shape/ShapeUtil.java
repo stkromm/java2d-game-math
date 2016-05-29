@@ -1,7 +1,7 @@
 package vine.math.geometry.shape;
 
-import vine.math.VineMath;
-import vine.math.vector.Vec2Util;
+import vine.math.GMath;
+import vine.math.vector.VectorUtils;
 import vine.math.vector.Vec2f;
 
 public final class ShapeUtil
@@ -23,8 +23,8 @@ public final class ShapeUtil
 
     private static void addPointToAABB(final MutableAABB aabb, final Vec2f point)
     {
-        aabb.setWidth(VineMath.max(aabb.getWidth(), point.getX() - aabb.getX()));
-        aabb.setHeight(VineMath.max(aabb.getHeight(), point.getY() - aabb.getY()));
+        aabb.setWidth(GMath.max(aabb.getWidth(), point.getX() - aabb.getX()));
+        aabb.setHeight(GMath.max(aabb.getHeight(), point.getY() - aabb.getY()));
     }
 
     /**
@@ -57,17 +57,17 @@ public final class ShapeUtil
         {
             return true;
         }
-        return Vec2Util.dot(xDiff, yDiff, xDiff, yDiff) <= radius * radius;
+        return VectorUtils.dot(xDiff, yDiff, xDiff, yDiff) <= radius * radius;
     }
 
     public static float circleArea(final float radius)
     {
-        return VineMath.PIF * radius * radius;
+        return GMath.PIF * radius * radius;
     }
 
     public static float circlePerimeter(final float radius)
     {
-        return VineMath.TWO_PIF * radius;
+        return GMath.TWO_PIF * radius;
     }
 
     public static float ellipsoidPerimeter(final float width, final float height)
@@ -77,18 +77,18 @@ public final class ShapeUtil
         {
             // Ramanujan approximation
             final float h = (width - height) * (width - height) / ((width + height) * (width + height));
-            return VineMath.PIF * (width + height) * (1 + 3 * h / (10 + (float) VineMath.sqrt(4 - 3 * h)));
+            return GMath.PIF * (width + height) * (1 + 3 * h / (10 + (float) GMath.sqrt(4 - 3 * h)));
         } else
         {
             // 5% approximation
-            final double sqrt = VineMath.sqrt((width * width + height * height) * 0.5);
-            return (float) (VineMath.TWO_PIF * sqrt);
+            final double sqrt = GMath.sqrt((width * width + height * height) * 0.5);
+            return (float) (GMath.TWO_PIF * sqrt);
         }
     }
 
     public static float ellipsoidArea(final float width, final float height)
     {
-        return VineMath.PIF * width * height;
+        return GMath.PIF * width * height;
     }
 
     public static boolean ellipsoidContainsPoint(
@@ -99,7 +99,7 @@ public final class ShapeUtil
             final float x,
             final float y)
     {
-        final double diff = Vec2Util.squaredLength(centerX - width / height * x, centerY - y);
+        final double diff = VectorUtils.squaredLength(centerX - width / height * x, centerY - y);
         return diff <= width * width;
     }
 
@@ -111,11 +111,11 @@ public final class ShapeUtil
             final float x3,
             final float y3)
     {
-        final double a = Vec2Util.length(x1, y1);
-        final double b = Vec2Util.length(x2, y2);
-        final double c = Vec2Util.length(x3, y3);
+        final double a = VectorUtils.length(x1, y1);
+        final double b = VectorUtils.length(x2, y2);
+        final double c = VectorUtils.length(x3, y3);
         final double s = a + b + c;
-        return (float) VineMath.sqrt(s * (s - a) * (s - b) * (s - c));
+        return (float) GMath.sqrt(s * (s - a) * (s - b) * (s - c));
     }
 
     public static float trianglePerimeter(
@@ -126,7 +126,7 @@ public final class ShapeUtil
             final float x3,
             final float y3)
     {
-        return (float) (Vec2Util.length(x1, y1) + Vec2Util.length(x2, y2) + Vec2Util.length(x3, y3));
+        return (float) (VectorUtils.length(x1, y1) + VectorUtils.length(x2, y2) + VectorUtils.length(x3, y3));
     }
 
     public static float triangleContainsPoint(
@@ -221,7 +221,7 @@ public final class ShapeUtil
      */
     public static float polygonArea(final float[] polygon, final int length)
     {
-        if (!isValidPolygon(polygon) || length > polygon.length || length < 6 || VineMath.isOdd(length))
+        if (!isValidPolygon(polygon) || length > polygon.length || length < 6 || GMath.isOdd(length))
         {
             return -1;
         }
@@ -230,7 +230,7 @@ public final class ShapeUtil
         {
             area += polygon[i] * polygon[i - 3] - polygon[i - 1] * polygon[i - 2];
         }
-        return VineMath.abs(area * 0.5f);
+        return GMath.abs(area * 0.5f);
     }
 
     /**
@@ -243,7 +243,7 @@ public final class ShapeUtil
      */
     public static boolean isValidPolygon(final float[] polygon)
     {
-        return polygon != null && polygon.length >= 6 && !VineMath.isOdd(polygon.length);
+        return polygon != null && polygon.length >= 6 && !GMath.isOdd(polygon.length);
     }
 
     /**
@@ -279,7 +279,7 @@ public final class ShapeUtil
         {
             final float x = polygon[i + 1] - polygon[i - 1];
             final float y = polygon[i] - polygon[i + 2];
-            perimeter += Vec2Util.length(x, y);
+            perimeter += VectorUtils.length(x, y);
         }
         return perimeter;
     }

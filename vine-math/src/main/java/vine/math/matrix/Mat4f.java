@@ -1,6 +1,6 @@
 package vine.math.matrix;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 import vine.math.vector.Vec3f;
 
 /**
@@ -103,9 +103,9 @@ public class Mat4f
     public static Mat4f rotate(final float angle)
     {
         final Mat4f result = identity();
-        final float r = VineMath.toRadians(angle);
-        final float cos = VineMath.cos(r);
-        final float sin = VineMath.sin(r);
+        final float r = GMath.toRadians(angle);
+        final float cos = GMath.cos(r);
+        final float sin = GMath.sin(r);
 
         result.elements[0 + 0 * 4] = cos;
         result.elements[1 + 0 * 4] = sin;
@@ -132,12 +132,10 @@ public class Mat4f
         {
             for (int x = 0; x < 4; x++)
             {
-                float sum = 0.0f;
-                for (int e = 0; e < 4; e++)
-                {
-                    sum += elements[x + e * 4] * matrix.elements[e + y * 4];
-                }
-                result.elements[x + y * 4] = sum;
+                result.elements[x + y * 4] = elements[x] * matrix.elements[y * 4];
+                result.elements[x + y * 4] += elements[x + 4] * matrix.elements[1 + y * 4];
+                result.elements[x + y * 4] += elements[x + 2 * 4] * matrix.elements[2 + y * 4];
+                result.elements[x + y * 4] += elements[x + 3 * 4] * matrix.elements[3 + y * 4];
             }
         }
         return result;

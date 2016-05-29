@@ -1,6 +1,6 @@
 package vine.math.auxilliary;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 public final class LookupSinCos
 {
@@ -15,7 +15,7 @@ public final class LookupSinCos
         SIN_MASK = ~(-1 << SIN_BITS);
         SIN_COUNT = SIN_MASK + 1;
 
-        RAD_FULL = VineMath.PIF * 2.0f;
+        RAD_FULL = GMath.PIF * 2.0f;
         DEG_FULL = 360.0f;
         RAD_TO_INDEX = SIN_COUNT / RAD_FULL;
         DEG_TO_INDEX = SIN_COUNT / DEG_FULL;
@@ -49,7 +49,7 @@ public final class LookupSinCos
 
     public static float cos(final float rad)
     {
-        final int index = Math.round((rad + VineMath.HALF_PIF) * RAD_TO_INDEX);
+        final int index = Math.round((rad + GMath.HALF_PIF) * RAD_TO_INDEX);
         return SIN_VALUES[index & SIN_MASK];
     }
 }

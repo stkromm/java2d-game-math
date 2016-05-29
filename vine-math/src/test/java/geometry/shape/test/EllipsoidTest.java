@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 import vine.math.geometry.shape.Circle;
 import vine.math.geometry.shape.Ellipsoid;
 import vine.math.geometry.shape.ShapeUtil;
@@ -39,7 +39,7 @@ public class EllipsoidTest
     public void testArea()
     {
         Circle cirlce = new Circle(0, 0, 5);
-        assertTrue(cirlce.getArea() == VineMath.PIF * 25);
+        assertTrue(cirlce.getArea() == GMath.PIF * 25);
         cirlce = new Circle(0, 0, 0);
         assertTrue(cirlce.getArea() == 0);
     }

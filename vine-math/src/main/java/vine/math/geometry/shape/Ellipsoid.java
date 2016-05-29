@@ -2,7 +2,7 @@ package vine.math.geometry.shape;
 
 import java.io.Serializable;
 
-import vine.math.vector.Vec2Util;
+import vine.math.vector.VectorUtils;
 import vine.math.vector.Vec2f;
 
 public class Ellipsoid implements Shape, Serializable
@@ -48,7 +48,7 @@ public class Ellipsoid implements Shape, Serializable
     @Override
     public boolean contains(final float pointX, final float pointY)
     {
-        final double length = Vec2Util.length(x - pointX, y - pointY * scale);
+        final double length = VectorUtils.length(x - pointX, y - pointY * scale);
         return length <= radius;
     }
 

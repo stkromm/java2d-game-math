@@ -16,11 +16,13 @@ public class UtilTest
     @Test
     public void testRepeat()
     {
-        assertEquals(VineMath.repeat(8, 2, 6), 2);
-        assertEquals(VineMath.repeat(-8, -6, -2), -4);
+        assertEquals(GMath.repeat(8, 2, 6), 2);
+        assertEquals(GMath.repeat(-8, -6, -2), -4);
 
         final float[] testArray = new float[] { 1, 1, 1, 0, 4, 6, 11, 0, 0 };
         SummedAreaTable.convertToSummedAreaTable(testArray, 3);
+        System.out.println(Arrays.toString(testArray));
+        SummedAreaTable.convertFromSummedAreaTable(testArray, 3);
         System.out.println(Arrays.toString(testArray));
     }
 

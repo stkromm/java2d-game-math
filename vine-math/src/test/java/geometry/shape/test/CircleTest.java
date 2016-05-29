@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 import vine.math.geometry.shape.Circle;
 import vine.math.vector.Vec2f;
 
@@ -28,14 +28,14 @@ public class CircleTest
     public void testPerimeter()
     {
         final Circle cirlce = new Circle(0, 0, 5);
-        assertTrue(cirlce.getCircumference() == VineMath.PIF * 10);
+        assertTrue(cirlce.getCircumference() == GMath.PIF * 10);
     }
 
     @Test
     public void testArea()
     {
         Circle cirlce = new Circle(0, 0, 5);
-        assertTrue(cirlce.getArea() == VineMath.PIF * 25);
+        assertTrue(cirlce.getArea() == GMath.PIF * 25);
         cirlce = new Circle(0, 0, 0);
         assertTrue(cirlce.getArea() == 0);
     }

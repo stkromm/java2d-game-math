@@ -1,6 +1,6 @@
 package vine.math.misc;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 public final class BernsteinPolynom
 {
@@ -13,7 +13,7 @@ public final class BernsteinPolynom
     {
         this.grad = grad;
         this.i = i;
-        coeffi = VineMath.binominalCoefficient(grad, i);
+        coeffi = GMath.binominalCoefficient(grad, i);
     }
 
     public float evaluate(final float u)

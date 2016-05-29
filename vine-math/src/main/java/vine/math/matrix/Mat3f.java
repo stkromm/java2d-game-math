@@ -2,7 +2,7 @@ package vine.math.matrix;
 
 import java.io.Serializable;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 /**
  * Represents a 3x3 Matrix, with floating point values as elements.
@@ -200,11 +200,11 @@ public class Mat3f implements Serializable
             return true;
         }
         final Mat3f matrix = (Mat3f) object;
-        final boolean isFirstRowCorrect = VineMath.abs(a11 - matrix.a11 + a12 - matrix.a12 + a13 - matrix.a13) <= 3
+        final boolean isFirstRowCorrect = GMath.abs(a11 - matrix.a11 + a12 - matrix.a12 + a13 - matrix.a13) <= 3
                 * EPSILON;
-        final boolean isSecondRowCorrect = VineMath.abs(a21 - matrix.a21 + a22 - matrix.a22 + a23 - matrix.a23) <= 3
+        final boolean isSecondRowCorrect = GMath.abs(a21 - matrix.a21 + a22 - matrix.a22 + a23 - matrix.a23) <= 3
                 * EPSILON;
-        final boolean isThirdRowCorrect = VineMath.abs(a31 - matrix.a31 + a32 - matrix.a32 + a33 - matrix.a33) <= 3
+        final boolean isThirdRowCorrect = GMath.abs(a31 - matrix.a31 + a32 - matrix.a32 + a33 - matrix.a33) <= 3
                 * EPSILON;
         return isFirstRowCorrect && isSecondRowCorrect && isThirdRowCorrect;
     }

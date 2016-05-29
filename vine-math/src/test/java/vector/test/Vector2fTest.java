@@ -6,7 +6,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 import vine.math.vector.MutableVec2f;
 import vine.math.vector.Vec2f;
 
@@ -51,11 +51,11 @@ public class Vector2fTest
         final MutableVec2f vector = new MutableVec2f(3, 0);
         assertTrue(!vector.isNormalized());
         vector.normalize();
-        assertTrue(Math.abs(Math.abs(vector.getX()) - 1.f) <= VineMath.EPSILON);
+        assertTrue(Math.abs(Math.abs(vector.getX()) - 1.f) <= GMath.EPSILON);
         final Vec2f vecc = new Vec2f(vector);
         assertTrue(vecc.isNormalized());
-        assertTrue(Math.abs(vector.getY()) <= VineMath.EPSILON);
-        assertTrue(Math.abs(Math.abs(vector.length()) - 1) <= VineMath.EPSILON);
+        assertTrue(Math.abs(vector.getY()) <= GMath.EPSILON);
+        assertTrue(Math.abs(Math.abs(vector.length()) - 1) <= GMath.EPSILON);
         final MutableVec2f nullVector = new MutableVec2f(0, 0);
         nullVector.normalize();
         assertTrue(nullVector.length() == 0);
@@ -65,7 +65,7 @@ public class Vector2fTest
             final MutableVec2f vec = new MutableVec2f(rn.nextFloat() * System.currentTimeMillis() - 12345,
                     System.nanoTime());
             vec.normalize();
-            assertTrue(Math.abs(vec.length() - 1) <= VineMath.EPSILON);
+            assertTrue(Math.abs(vec.length() - 1) <= GMath.EPSILON);
         }
     }
 
@@ -110,7 +110,7 @@ public class Vector2fTest
     public void testEquality()
     {
         final Vec2f vec = new Vec2f(4, 5);
-        final Vec2f vec2 = new Vec2f(4, 5 + VineMath.EPSILON);
+        final Vec2f vec2 = new Vec2f(4, 5 + GMath.EPSILON);
         assertTrue(!vec.nearlyEquals(null));
         assertTrue(vec2.nearlyEquals(4, 5));
         assertTrue(!vec2.nearlyEquals(4.5f, 5));
@@ -156,14 +156,14 @@ public class Vector2fTest
         vector.set(4, 6);
 
         vector.scale(1.f / vector.length(), 1.f / vector.length());
-        assertTrue(Math.abs(vector.length() - 1) <= VineMath.EPSILON);
+        assertTrue(Math.abs(vector.length() - 1) <= GMath.EPSILON);
 
         vector.scale(null);
-        assertTrue(Math.abs(vector.length() - 1) <= VineMath.EPSILON);
+        assertTrue(Math.abs(vector.length() - 1) <= GMath.EPSILON);
 
         final MutableVec2f vec = new MutableVec2f(vector);
         vec.scale(new Vec2f());
-        assertTrue(VineMath.isNearlyZero(vec.length()));
+        assertTrue(GMath.isNearlyZero(vec.length()));
     }
 
     @Test
@@ -171,13 +171,13 @@ public class Vector2fTest
     {
         Vec2f vector = new Vec2f(1.f, 0.f);
         Vec2f vector2 = new Vec2f(1.0f, 1.f);
-        assertTrue(Math.abs(vector.getAngle(vector2) - VineMath.PIF / 4) <= VineMath.EPSILON);
+        assertTrue(Math.abs(vector.getAngle(vector2) - GMath.PIF / 4) <= GMath.EPSILON);
         assertTrue(vector.getAngle(null) == 0);
         vector2 = new Vec2f(0, 0);
         assertTrue(vector.getAngle(vector2) == 0);
         vector = new Vec2f(0, 0);
         assertTrue(vector2.getAngle(vector) == 0);
-        assertTrue(new Vec2f(0.5f, -1.5f).getAngle(new Vec2f(-1, 3)) == VineMath.PIF);
+        assertTrue(new Vec2f(0.5f, -1.5f).getAngle(new Vec2f(-1, 3)) == GMath.PIF);
     }
 
     @Test

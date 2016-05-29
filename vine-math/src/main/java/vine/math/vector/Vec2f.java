@@ -1,10 +1,10 @@
 package vine.math.vector;
 
-import static vine.math.VineMath.sqrt;
+import static vine.math.GMath.sqrt;
 
 import java.io.Serializable;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 /**
  * Represents a mathematical immutable vector 2d.
@@ -150,12 +150,12 @@ public class Vec2f implements Serializable
      */
     public final float dot(final Vec2f vector)
     {
-        return vector == null ? 0 : Vec2Util.dot(x, y, vector.getX(), vector.getY());
+        return vector == null ? 0 : VectorUtils.dot(x, y, vector.getX(), vector.getY());
     }
 
     public final float dot(final float x, final float y)
     {
-        return Vec2Util.dot(this.x, this.y, x, y);
+        return VectorUtils.dot(this.x, this.y, x, y);
     }
 
     /**
@@ -167,7 +167,7 @@ public class Vec2f implements Serializable
     {
         if (cachedLength == INVALIDATED_LENGTH)
         {
-            cachedLength = (float) Vec2Util.length(x, y);
+            cachedLength = (float) VectorUtils.length(x, y);
         }
         return cachedLength;
     }
@@ -179,7 +179,7 @@ public class Vec2f implements Serializable
      */
     public final float squaredLength()
     {
-        return Vec2Util.squaredLength(x, y);
+        return VectorUtils.squaredLength(x, y);
     }
 
     /**
@@ -205,7 +205,7 @@ public class Vec2f implements Serializable
      */
     public final float squaredDistance(final float x, final float y)
     {
-        return Vec2Util.squaredLength(this.x - x, this.y - y);
+        return VectorUtils.squaredLength(this.x - x, this.y - y);
     }
 
     /**
@@ -255,7 +255,7 @@ public class Vec2f implements Serializable
 
     public final float getAngle(final float x, final float y)
     {
-        return Vec2Util.getAngle(this.x, this.y, x, y);
+        return VectorUtils.getAngle(this.x, this.y, x, y);
     }
 
     /**
@@ -265,7 +265,7 @@ public class Vec2f implements Serializable
      */
     public final boolean isNormalized()
     {
-        return VineMath.isNearlyEqual(squaredLength() - 1, VineMath.EPSILON * 0.1f);
+        return GMath.isNearlyEqual(squaredLength() - 1, GMath.EPSILON * 0.1f);
     }
 
     /**
@@ -275,7 +275,7 @@ public class Vec2f implements Serializable
      */
     public final boolean isNearlyZero()
     {
-        return VineMath.isNearlyZero(x) && VineMath.isNearlyZero(y);
+        return GMath.isNearlyZero(x) && GMath.isNearlyZero(y);
     }
 
     /**
@@ -286,7 +286,7 @@ public class Vec2f implements Serializable
      */
     public final float getSlope()
     {
-        return Vec2Util.getSlope(x, y);
+        return VectorUtils.getSlope(x, y);
     }
 
     /**
@@ -325,7 +325,7 @@ public class Vec2f implements Serializable
      */
     public final boolean nearlyEquals(final float x, final float y)
     {
-        return VineMath.isNearlyEqual(x, this.x) && VineMath.isNearlyEqual(y, this.y);
+        return GMath.isNearlyEqual(x, this.x) && GMath.isNearlyEqual(y, this.y);
     }
 
     @Override

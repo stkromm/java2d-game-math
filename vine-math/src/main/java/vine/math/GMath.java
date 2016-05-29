@@ -5,12 +5,45 @@ import vine.math.auxilliary.Icecore;
 import vine.math.auxilliary.LookupSinCos;
 import vine.math.auxilliary.Xorshift128Plus;
 
-public final class VineMath
+/**
+ * A math function collection, which replaces java.math.Math for most part and
+ * extends with functions useful for graphics and game applications. All Method
+ * favor speed before special-case-handling and accuracy.
+ *
+ * Function, that are prefixed with "fast" may have a really bad accuracy and
+ * can only fit a limited number of use-cases. But for the case, that accuracy
+ * is no concern for your problem, use these function, because the are multiple
+ * times faster than the regular methods.
+ *
+ * Equivalents of Math functions may have a lower accuracy, too. But these
+ * accuracy errors should be negligible due to floating-point errors and the
+ * speed-up.
+ *
+ * @author Steffen Kromm, first created on 25.01.2016
+ *
+ */
+public final class GMath
 {
-    private static final Xorshift128Plus RANDOM            = new Xorshift128Plus();
+    /**
+     * Random number generator.
+     */
+    private static final Xorshift128Plus RANDOM_GENERATOR  = new Xorshift128Plus();
+    /**
+     * Magic number for value of the lsb of int values.
+     */
     private static final int             ONE_BIT           = 1;
+    /**
+     * Magic number to round floats.
+     */
     public static final float            FLOAT_ROUND_SHIFT = 0.5f;
-    public static final int              FLOAT_ROUND_INT   = VineMath.pow(2, 14);
+    /**
+     * Magic number to shift floats, so they can be correct rounded.
+     */
+    public static final int              FLOAT_ROUND_INT   = GMath.pow(2, 14);
+    /**
+     * Wikipedia:
+     * "The number PI is a mathematical constant, the ratio of a circle's circumference to its diameter."
+     */
     public static final float            PIF               = 3.14159265358979323846f;
     public static final double           PI                = 3.14159265358979323846;
     public static final float            TWO_PIF           = PIF * 2;
@@ -20,45 +53,9 @@ public final class VineMath
      */
     public static final float            EPSILON           = 0.000001f;
 
-    private VineMath()
+    private GMath()
     {
         // Utility class
-    }
-
-    /**
-     * Unwinds the given radians and returns a new radian value in the interval
-     * {@code [-2Pi,2Pi]}
-     */
-    public static float unwindRadians(final float angle)
-    {
-        float d = angle;
-        while (d > PIF)
-        {
-            d -= TWO_PIF;
-        }
-        while (d < -PIF)
-        {
-            d += TWO_PIF;
-        }
-        return d;
-    }
-
-    /**
-     * Unwinds the given degrees and returns new degree value in the interval
-     * {@code [-180,180]}
-     */
-    public static float unwindDegrees(final float angle)
-    {
-        float d = angle;
-        while (d > 180.f)
-        {
-            d -= 360.f;
-        }
-        while (d < -180.f)
-        {
-            d += 360.f;
-        }
-        return d;
     }
 
     /**
@@ -83,11 +80,12 @@ public final class VineMath
     }
 
     /**
+     * Calculates the factorial of a given value n.
      *
-     * @param n
-     * @return
+     * @throws IllegalArgumentException
+     *             Thrown, if the value {@code n} exceeds the interval [0,20].
      */
-    public static long factorial(final int n)
+    public static long factorial(final int n) throws IllegalArgumentException
     {
         if (n < 0 || n > 20)
         {
@@ -97,13 +95,11 @@ public final class VineMath
     }
 
     /**
-     *
-     * @param value
-     * @return
+     * Calculates the squareroot of the given value.
      */
     public static double sqrt(final double value)
     {
-        return StrictMath.sqrt(value);
+        return (float) StrictMath.sqrt(value);
     }
 
     /**
@@ -111,31 +107,29 @@ public final class VineMath
      * times faster than the regular sqrt method, but it is only a very rough
      * approximation. The calculated value has a error of 0.5 - 1.5 % but a
      * error up to 10% is possible.
-     *
-     * @param x
-     * @return
      */
     public static float fastSqrt(final float x)
     {
+        if (isNearlyZero(x))
+        {
+            return 0;
+        } else if (isNearlyEqual(x, 1))
+        {
+            return 1;
+        }
         return Float.intBitsToFloat(532483686 + (Float.floatToRawIntBits(x) >> 1));
     }
 
     /**
-     *
-     * @param a
-     * @param b
-     * @return
+     * Calculates the value of a^b.
      */
-    public static float pow(final double a, final double b)
+    public static float pow(final float a, final float b)
     {
         return (float) StrictMath.pow(a, b);
     }
 
     /**
-     *
-     * @param a
-     * @param b
-     * @return
+     * Calculates the value of a^b.
      */
     public static int pow(final int a, final int b)
     {
@@ -150,7 +144,6 @@ public final class VineMath
             }
             base *= base;
         }
-
         return result;
     }
 
@@ -174,16 +167,18 @@ public final class VineMath
             return value;
         } else
         {
-            return exp(power * log(value));
+            return exp(power * ln(value));
         }
     }
 
     /**
+     * Evaluates the exponential function at {@code value}.
      *
      * @param value
-     * @return
+     *            The function parameter
+     * @return The function value at {@code value}
      */
-    public static float exp(final double value)
+    public static float exp(final float value)
     {
         return (float) Math.exp(value);
     }
@@ -192,34 +187,29 @@ public final class VineMath
      * Calculates exp faster than the standard version at the expense of
      * accuracy.
      *
-     * @param val
-     *            The argument for exp
-     * @return The function value of exp for val
+     * @param value
+     *            The function parameter
+     * @return The function value at {@code value}
      */
     public static float fastExp(final float val)
     {
-        final long tmp = (long) (1512775 * val + 1072632447);
-        return Float.intBitsToFloat((int) (tmp << 32));
+        final long exp = (long) (1512775L * val + 1072632447L);
+        return Float.intBitsToFloat((int) (exp << 32));
     }
 
-    /**
-     *
-     * @param value
-     * @return
-     */
-    public static float log(final double value)
+    public static float ln(final float value)
     {
         return (float) Math.log(value);
     }
 
-    /**
-     *
-     * @param x
-     * @return
-     */
+    public static float log(final float value)
+    {
+        return (float) Math.log10(value);
+    }
+
     public static float fastLog(final float x)
     {
-        return 6 * (x - 1) / (x + 1 + 4 * (float) VineMath.sqrt(x));
+        return 6 * (x - 1) / (x + 1 + 4 * (float) GMath.sqrt(x));
     }
 
     /**
@@ -292,6 +282,78 @@ public final class VineMath
     public static int min(final int x, final int y)
     {
         return x <= y ? x : y;
+    }
+
+    public static float max(final float[] values)
+    {
+        if (values.length == 0)
+        {
+            return 0;
+        }
+        if (values.length == 1)
+        {
+            return values[0];
+        }
+        float max = values[0];
+        for (int i = values.length - 2; i >= 0; i--)
+        {
+            max = max(max, values[i]);
+        }
+        return max;
+    }
+
+    public static float min(final float[] values)
+    {
+        if (values.length == 0)
+        {
+            return 0;
+        }
+        if (values.length == 1)
+        {
+            return values[0];
+        }
+        float min = values[0];
+        for (int i = values.length - 2; i >= 0; i--)
+        {
+            min = min(min, values[i]);
+        }
+        return min;
+    }
+
+    public static int max(final int[] values)
+    {
+        if (values.length == 0)
+        {
+            return 0;
+        }
+        if (values.length == 1)
+        {
+            return values[0];
+        }
+        int max = values[0];
+        for (int i = values.length - 2; i >= 0; i--)
+        {
+            max = max(max, values[i]);
+        }
+        return max;
+    }
+
+    public static int min(final int[] values)
+    {
+        if (values.length == 0)
+        {
+            return 0;
+        }
+        if (values.length == 1)
+        {
+            return values[0];
+        }
+        int min = values[0];
+        for (int i = values.length - 2; i >= 0; i--)
+        {
+            min = min(min, values[i]);
+        }
+        return min;
     }
 
     /**
@@ -488,7 +550,13 @@ public final class VineMath
      */
     public static int randomInteger(final int max)
     {
-        return VineMath.round(randomFloat(max));
+        return GMath.round(randomFloat(max));
+    }
+
+    public static int randomInteger(final int min, final int max)
+    {
+        assert min <= max : "Interval for random float is in wrong order. min > max";
+        return (int) (RANDOM_GENERATOR.nextFloat() * (max - min)) + min;
     }
 
     /**
@@ -502,7 +570,7 @@ public final class VineMath
     public static float randomFloat(final float min, final float max)
     {
         assert min <= max : "Interval for random float is in wrong order. min > max";
-        return RANDOM.nextFloat() * (max - min) + min;
+        return RANDOM_GENERATOR.nextFloat() * (max - min) + min;
     }
 
     /**
@@ -514,7 +582,7 @@ public final class VineMath
      */
     public static float randomFloat(final float max)
     {
-        return RANDOM.nextFloat() * max;
+        return RANDOM_GENERATOR.nextFloat() * max;
     }
 
     /**
@@ -524,28 +592,19 @@ public final class VineMath
      */
     public static float random()
     {
-        return RANDOM.nextFloat();
+        return RANDOM_GENERATOR.nextFloat();
     }
 
     /**
-     * Linear interpolates between the values {@code a} and {@code b} with the
-     * given lerp value {@code alpha}, which has to be in the interval [0,1].
+     * Calculates the cosin of the given radian value.
      *
-     * @param a
-     *            The 1st value
-     * @param b
-     *            The 2nd value
-     * @param alpha
-     *            Value used to linear interpolate between {@code a} and
-     *            {@code b}. A value of 0 will result in returning the value
-     *            {@code a}, a value of 1 will result in returning the value
-     *            {@code b}.
-     * @return The linear interpolation of {@code a} and {@code b} evaluated
-     *         with {@code alpha}
+     * @param rad
+     *            Radian input value for cos.
+     * @return The cos value for the given radian.
      */
-    public static float lerp(final float a, final float b, final float alpha)
+    public static float cos(final float rad)
     {
-        return a * (1 - alpha) + b * alpha;
+        return LookupSinCos.cos(rad);
     }
 
     /**
@@ -561,15 +620,101 @@ public final class VineMath
     }
 
     /**
-     * Calculates the cosin of the given radian value.
-     *
-     * @param rad
-     *            Radian input value for cos.
-     * @return The cos value for the given radian.
+     * Calculates tan of the given value.
      */
-    public static float cos(final float rad)
+    public static float tan(final float value)
     {
-        return LookupSinCos.cos(rad);
+        return sin(value) / cos(value);
+    }
+
+    /**
+     * http://http.developer.nvidia.com/Cg/cosh.html
+     */
+    public static float cosh(final float value)
+    {
+        return 0.5f * (exp(value) + exp(-value));
+    }
+
+    /**
+     * Calculates sinh of the given value.
+     */
+    public static float sinh(final float value)
+    {
+        return 0.5f * (exp(value) - exp(-value));
+    }
+
+    /**
+     * Calculates tanh of the given value.
+     */
+    public static float tanh(final float value)
+    {
+        final float exp2x = exp(2 * value);
+        return (exp2x - 1) / (exp2x + 1);
+    }
+
+    /**
+     * Calculates acos of the given value.
+     */
+    public static float acos(final float value)
+    {
+        return (float) Math.acos(value);
+    }
+
+    /**
+     * Calculates acos of the given value.
+     * http://http.developer.nvidia.com/Cg/acos.html
+     */
+    public static float fastAcos(final float value)
+    {
+        final float x = abs(value);
+        float ret = -0.0187293f;
+        ret = ret * x;
+        ret = ret + 0.0742610f;
+        ret = ret * x;
+        ret = ret - 0.2121144f;
+        ret = ret * x;
+        ret = ret + HALF_PIF;
+        ret = (float) (ret * sqrt(1.0 - x));
+        ret = value < 0 ? ret - 2 * ret : ret;
+        return value < 0 ? PIF * 2 + ret : ret;
+    }
+
+    public static float asin(final float value)
+    {
+        return (float) Math.asin(value);
+    }
+
+    /**
+     * https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/
+     * Runtime/Core/Public/Math/UnrealMathUtility.h
+     *
+     * http://http.developer.nvidia.com/Cg/asin.html
+     *
+     */
+    public static float fastAsin(final float value)
+    {
+        // Clamp input to [-1,1].
+        final boolean nonnegative = value >= 0.0f;
+        final float x = abs(value);
+        float omx = 1.0f - x;
+        if (omx < 0.0f)
+        {
+            omx = 0.0f;
+        }
+        final double root = sqrt(omx);
+        float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x
+                - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + 1.5707963050f;
+        result *= root; // acos(|x|)
+        // acos(x) = pi - acos(-x) when x < 0, asin(x) = pi/2 - acos(x)
+        return nonnegative ? 1.5707963050f - result : result - 1.5707963050f;
+    }
+
+    /**
+     * Calculates atan of the given value.
+     */
+    public static float atan(final float value)
+    {
+        return atan2(value, 1);
     }
 
     /**
@@ -614,6 +759,46 @@ public final class VineMath
     }
 
     /**
+     * Unwinds the given radians and returns a new radian value in the interval
+     * {@code [-2Pi,2Pi]}.
+     *
+     * @param angle
+     *            the angle in radians, that should be unwinded.
+     * @return the unwinded angle (value lays in {@code [-2Pi,2Pi]}).
+     */
+    public static float unwindRadians(final float angle)
+    {
+        float d = angle;
+        while (d > PIF)
+        {
+            d -= TWO_PIF;
+        }
+        while (d < -PIF)
+        {
+            d += TWO_PIF;
+        }
+        return d;
+    }
+
+    /**
+     * Unwinds the given degrees and returns new degree value in the interval
+     * {@code [-180,180]}
+     */
+    public static float unwindDegrees(final float angle)
+    {
+        float d = angle;
+        while (d > 180.f)
+        {
+            d -= 360.f;
+        }
+        while (d < -180.f)
+        {
+            d += 360.f;
+        }
+        return d;
+    }
+
+    /**
      * Checks, if the given value is nearly equal to zero.
      *
      * @param value
@@ -622,7 +807,7 @@ public final class VineMath
      *         of {@link #EPSILON}.
      * @see {@link #isNearlyZero(float, float)} with {@link #EPSILON}
      */
-    public static boolean isNearlyZero(final float value)
+    public static boolean isNearlyZero(final double value)
     {
         return isNearlyZero(value, EPSILON);
     }
@@ -638,7 +823,7 @@ public final class VineMath
      * @return True, if the given value is near zero with a maximum difference
      *         of {@link epsilon}.
      */
-    public static boolean isNearlyZero(final float value, final float epsilon)
+    public static boolean isNearlyZero(final double value, final double epsilon)
     {
         return value <= epsilon && -value <= epsilon;
     }
@@ -652,41 +837,44 @@ public final class VineMath
      *            The 2nd value to compare
      * @see {@link #isNearlyEqual(float, float, float)} with {@link #EPSILON}
      */
-    public static boolean isNearlyEqual(final float val1, final float val2)
+    public static boolean isNearlyEqual(final double val1, final double val2)
     {
         return isNearlyEqual(val1, val2, EPSILON);
     }
 
     /**
-     * Checks if the given {@code float} numbers are nearly equal.
+     * Checks, if the given {@code float} numbers are nearly equal.
      *
      * @param val1
-     *            The 1st value to compare
+     *            The 1st value to compare.
      * @param val2
-     *            The 2nd value to compare
+     *            The 2nd value to compare.
      * @param epsilon
-     *            The epsilon that limits the tolerated difference of both
-     *            numbers
+     *            The epsilon that limits the tolerated deviation of both
+     *            numbers.
      * @return True, if the deviation of both numbers is within [0,
      *         {@code epsilon}].
      */
-    public static boolean isNearlyEqual(final float val1, final float val2, final float epsilon)
+    public static boolean isNearlyEqual(final double val1, final double val2, final double epsilon)
     {
         return val1 > val2 ? val1 - val2 <= epsilon : val2 - val1 <= epsilon;
     }
 
     /**
      * <p>
-     * From libgdx MathUtils.
+     * Algorithm taken from libgdx MathUtils class.
      * </p>
-     * Returns the closest integer to the specified float. This method will only
-     * properly round floats from -(2^14) to (Float.MAX_VALUE - 2^14).
+     * Rounds the given {@code float} value to the nearest {@code integer}
+     * value.
+     *
+     * This method will only properly round floats from -(2^14) to
+     * (Float.MAX_VALUE - 2^14).
      *
      * @param value
      *            The value, that should be rounded
-     * @return A value, that is the rounded input value
+     * @return The rounded value
      */
-    static public int round(final float value)
+    public static int round(final float value)
     {
         return (int) (value + FLOAT_ROUND_INT + FLOAT_ROUND_SHIFT) - FLOAT_ROUND_INT;
     }
@@ -697,11 +885,20 @@ public final class VineMath
      *
      * @param value
      *            The value, that should be rounded
-     * @return A value, that is the rounded input value
+     * @return The rounded value
      */
     public static int roundPositive(final float value)
     {
-        assert value > -FLOAT_ROUND_SHIFT - EPSILON : "Tried to round positive negative value " + value;
+        assert value > -FLOAT_ROUND_SHIFT - EPSILON : "Tried to roundPositive negative value " + value;
         return (int) (value + FLOAT_ROUND_SHIFT);
+    }
+
+    public static int snapToGrid(final float value, final int gridSize)
+    {
+        if (gridSize == 0 || gridSize == 1)
+        {
+            return round(value);
+        }
+        return round((value + 0.5f * gridSize) / gridSize) * gridSize;
     }
 }

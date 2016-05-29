@@ -3,7 +3,7 @@ package vine.math.matrix;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 import vine.math.geometry.Transformable;
 
 public class MutableMat3f extends Mat3f implements Transformable
@@ -333,9 +333,9 @@ public class MutableMat3f extends Mat3f implements Transformable
     public void rotate(final float angle)
     {
         final Mat3f rotator = Mat3f.getIdentity();
-        final float rotation = VineMath.toRadians(angle);
-        final float cos = VineMath.cos(rotation);
-        final float sin = VineMath.sin(rotation);
+        final float rotation = GMath.toRadians(angle);
+        final float cos = GMath.cos(rotation);
+        final float sin = GMath.sin(rotation);
         rotator.a11 = cos;
         rotator.a12 = sin;
         rotator.a21 = -sin;
@@ -345,8 +345,8 @@ public class MutableMat3f extends Mat3f implements Transformable
 
     public void setRotation(final float angle)
     {
-        final float cos = VineMath.cos(angle);
-        final float sin = VineMath.sin(angle);
+        final float cos = GMath.cos(angle);
+        final float sin = GMath.sin(angle);
         a11 = cos;
         a12 = sin;
         a21 = -sin;

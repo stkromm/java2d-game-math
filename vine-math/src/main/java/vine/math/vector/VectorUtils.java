@@ -1,6 +1,6 @@
 package vine.math.vector;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 /**
  * Utility class for operations on 2 dimensional vectors. All methods take the
@@ -16,11 +16,109 @@ import vine.math.VineMath;
  *
  * @author Steffen Kromm, first created on 04.05.2016
  */
-public final class Vec2Util
+public final class VectorUtils
 {
-    private Vec2Util()
+    private VectorUtils()
     {
         // Utility class
+    }
+
+    /**
+     * Calculates the squared length of the given vector.
+     *
+     * @param x
+     *            The x coordinate of the vector
+     * @param y
+     *            The y coordinate of the vector
+     * @return The squared length of the each element given 2d vector.
+     */
+    public static double squaredLength(final double x, final double y, final double z)
+    {
+        return dot(x, y, z, x, y, z);
+    }
+
+    /**
+     * Calculates the squared length of the given vector.
+     *
+     * @param x
+     *            The x coordinate of the vector
+     * @param y
+     *            The y coordinate of the vector
+     * @return The squared length of the each element given 2d vector.
+     */
+    public static float squaredLength(final float x, final float y, final float z)
+    {
+        return dot(x, y, z, x, y, z);
+    }
+
+    /**
+     * Calculates the length of the given vector.
+     *
+     * @param x
+     *            The x coordinate of the vector
+     * @param y
+     *            The y coordinate of the vector
+     * @return The length of the elementwise given 2d vector.
+     */
+    public static double length(final double x, final double y, final double z)
+    {
+        return GMath.sqrt(dot(x, y, z, x, y, z));
+    }
+
+    /**
+     * Calculates the dot product of the 2 each element given 3d vectors.
+     *
+     * @param x1
+     *            x Coordinate of the 1st vector
+     * @param y1
+     *            y Coordinate of the 1st vector
+     * @param z1
+     *            z Coordinate of the 1st vector
+     * @param x2
+     *            x Coordinate of the 2nd vector
+     * @param y2
+     *            y Coordinate of the 2nd vector
+     * @param z2
+     *            z Coordinate of the 2nd vector
+     * @return The dot product of the given vectors.
+     */
+    public static double dot(
+            final double x1,
+            final double y1,
+            final double z1,
+            final double x2,
+            final double y2,
+            final double z2)
+    {
+        return x1 * x2 + y1 * y2 + z1 * z2;
+    }
+
+    /**
+     * Calculates the dot product of the 2 each element given 3d vectors.
+     *
+     * @param x1
+     *            x Coordinate of the 1st vector
+     * @param y1
+     *            y Coordinate of the 1st vector
+     * @param z1
+     *            z Coordinate of the 1st vector
+     * @param x2
+     *            x Coordinate of the 2nd vector
+     * @param y2
+     *            y Coordinate of the 2nd vector
+     * @param z2
+     *            z Coordinate of the 2nd vector
+     * @return The dot product of the given vectors.
+     */
+    public static float dot(
+            final float x1,
+            final float y1,
+            final float z1,
+            final float x2,
+            final float y2,
+            final float z2)
+    {
+        return x1 * x2 + y1 * y2 + z1 * z2;
     }
 
     /**
@@ -34,7 +132,7 @@ public final class Vec2Util
      */
     public static double length(final float x, final float y)
     {
-        return VineMath.sqrt(dot(x, y, x, y));
+        return GMath.sqrt(dot(x, y, x, y));
     }
 
     /**
@@ -115,27 +213,27 @@ public final class Vec2Util
      */
     public static float getAngle(final float x1, final float y1, final float x2, final float y2)
     {
-        if (VineMath.isNearlyZero(x1) && VineMath.isNearlyZero(y1)
-                || VineMath.isNearlyZero(x2) && VineMath.isNearlyZero(y2))
+        if (GMath.isNearlyZero(x1) && GMath.isNearlyZero(y1)
+                || GMath.isNearlyZero(x2) && GMath.isNearlyZero(y2))
         {
             return 0.f;
         }
         final float dot = dot(x1, y1, x2, y2);
 
         // Check if the vectors are perpendicular
-        if (VineMath.isNearlyZero(dot))
+        if (GMath.isNearlyZero(dot))
         {
-            return VineMath.HALF_PIF;
+            return GMath.HALF_PIF;
         }
         final float pseudoCross = pseudoCross(x1, y1, x2, y2);
 
         // Check if the vectors are collinear directions
-        if (VineMath.isNearlyZero(pseudoCross))
+        if (GMath.isNearlyZero(pseudoCross))
         {
             // Opposite direction
-            if (dot < -VineMath.EPSILON)
+            if (dot < -GMath.EPSILON)
             {
-                return VineMath.PIF;
+                return GMath.PIF;
             }
             // Because we know the vectors are collinear, but not opposite
             // directions, they must have the same direction.
@@ -144,30 +242,30 @@ public final class Vec2Util
                 return 0.f;
             }
         }
-        float angle = VineMath.atan2(pseudoCross, dot);
-        if (angle > VineMath.PIF)
+        float angle = GMath.atan2(pseudoCross, dot);
+        if (angle > GMath.PIF)
         {
-            angle -= VineMath.TWO_PIF;
-        } else if (angle < -VineMath.PIF)
+            angle -= GMath.TWO_PIF;
+        } else if (angle < -GMath.PIF)
         {
-            angle += VineMath.TWO_PIF;
+            angle += GMath.TWO_PIF;
         }
         return angle;
     }
 
     public static boolean isCollinear(final float x1, final float y1, final float x2, final float y2)
     {
-        return VineMath.isNearlyZero(pseudoCross(x1, y1, x2, y2));
+        return GMath.isNearlyZero(pseudoCross(x1, y1, x2, y2));
     }
 
     public static boolean isSameDirection(final float x1, final float y1, final float x2, final float y2)
     {
-        return isCollinear(x1, y1, x2, y2) && dot(x1, y1, x2, y2) > VineMath.EPSILON;
+        return isCollinear(x1, y1, x2, y2) && dot(x1, y1, x2, y2) > GMath.EPSILON;
     }
 
     public static boolean isOppositeDirection(final float x1, final float y1, final float x2, final float y2)
     {
-        return isCollinear(x1, y1, x2, y2) && dot(x1, y1, x2, y2) < -VineMath.EPSILON;
+        return isCollinear(x1, y1, x2, y2) && dot(x1, y1, x2, y2) < -GMath.EPSILON;
     }
 
     /**
@@ -180,7 +278,7 @@ public final class Vec2Util
      */
     public static float getSlope(final float x, final float y)
     {
-        if (VineMath.isNearlyZero(x))
+        if (GMath.isNearlyZero(x))
         {
             return Float.MAX_VALUE;
         } else

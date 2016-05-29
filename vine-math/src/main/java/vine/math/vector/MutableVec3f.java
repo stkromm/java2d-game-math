@@ -1,6 +1,6 @@
 package vine.math.vector;
 
-import vine.math.VineMath;
+import vine.math.GMath;
 
 public class MutableVec3f extends Vec3f
 {
@@ -85,7 +85,7 @@ public class MutableVec3f extends Vec3f
         {
             return;
         }
-        final float inversedLength = (float) (1 / VineMath.sqrt(dot(this)));
+        final float inversedLength = (float) (1 / GMath.sqrt(dot(this)));
         scale(inversedLength);
         calculatedLength = 1;
     }

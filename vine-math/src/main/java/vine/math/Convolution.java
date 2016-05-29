@@ -33,8 +33,8 @@ public final class Convolution
                 {
                     for (int j = filterHeight - 1; j >= 0; j--)
                     {
-                        final int x = VineMath.clamp(a - filterWidth / 2 + i, 0, valuesWidth);
-                        final int y = VineMath.clamp(b - filterHeight / 2 + j, 0, valuesHeight);
+                        final int x = GMath.clamp(a - filterWidth / 2 + i, 0, valuesWidth);
+                        final int y = GMath.clamp(b - filterHeight / 2 + j, 0, valuesHeight);
                         tmp += values[a + valuesWidth * b] * filter[x + y * filterWidth];
                     }
                 }
