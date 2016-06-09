@@ -32,7 +32,7 @@ public class EllipsoidTest
     public void testCircumference()
     {
         final Ellipsoid ellipsoid = new Ellipsoid(0, 0, 5, 4);
-        assertTrue(ellipsoid.getCircumference() == ShapeUtil.ellipsoidPerimeter(5, 4));
+        assertTrue(ellipsoid.getCircumference() == ShapeUtil.ellipsoidCircumference(5, 4));
     }
 
     @Test

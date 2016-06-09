@@ -38,6 +38,6 @@ public class UtilTest
     public void testPolygonPerimeter()
     {
         final float[] polygon = new float[] { 0, 0, 1, 0, 1, 1, 0, 1 };
-        assertTrue(ShapeUtil.polygonPerimeter(polygon, polygon.length) - 4 <= 0.00000001);
+        assertTrue(ShapeUtil.polygonCircumference(polygon, polygon.length) - 4 <= 0.00000001);
     }
 }
